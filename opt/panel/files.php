@@ -85,8 +85,8 @@ $GLOBALS['online_viewer'] = true;
 error_reporting(0);
 
 // include user config php file
-if (defined('FM_CONFIG') && is_file(FM_CONFIG)) {
-    include(FM_CONFIG);
+if (defined('FM_CONFIG') && is_file('FM_CONFIG')) {
+    include('FM_CONFIG');
 }
 
 //--- EDIT BELOW CAREFULLY OR DO NOT EDIT AT ALL

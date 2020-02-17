@@ -13,23 +13,21 @@ Translated to English & Updated by Ren232.
 
 
 <h1> Requirements </h1>
-- A Heroku Account (https://dashboard.heroku.com/)
-<br>- A dropbox account + API key (Goto https://www.dropbox.com/developers/apps Click on create app, Select Dropbox API, Select App folder, Name the app & create it, Click on the app, Goto Generated access token, Click on Generate and Copy the key.)
-<br>- A Ngrok account (https://dashboard.ngrok.com/)
+- A [Heroku Account](https://dashboard.heroku.com/)
+<br>
+- A [Dropbox Account](https://www.dropbox.com/register) + [API Key](https://www.dropbox.com/developers/apps) (Click on create app, Select Dropbox API, Select App folder, Name the app & create it, Click on the app, Goto Generated access token, Click on Generate and Copy the key.)
+<br>
+- A [Ngrok Account](https://dashboard.ngrok.com/)
 
 <h1> Setup </h1>
 
 1. Click on the button below, Give the app a name (This is also going to be your panel's subdomain), Paste your Dropbox API key, and click on deploy.<br>
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-2. Now goto https://APP_NAME.herokuapp.com/panel/install.php to create an account and server (Please notice that the total server ram is limited to 1024 mb.)
+2. Now goto https://<APP_NAME>.herokuapp.com/panel/install.php to create an account and server (Please notice that the total server RAM for a free dyno is limited to 512 MB.)
 
 3. Paste your ngrok key on the Dashboard page.
 
-4. Goto https://wakemydyno.com Enter the website and click on submit.
+4. Goto https://wakemydyno.com, enter your app link (https://<APP_NAME>.herokuapp.com) and click on submit.
 
 5. Done!
-
-<h1> Notice </h1>
-The total ram of a free dyno is limited to 1024 mb.<br>
-When the ram usage is more than 1024 mb, it will reset.
