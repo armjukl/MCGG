@@ -35,7 +35,7 @@ if (!empty($_SESSION['user']) && $user = user_info($_SESSION['user'])) {
 </head>
 <body>
 <noscript>
-	<p class="alert alert-warning"><strong>Enable Javascript:</strong> Javascript is required to use MCGG.</p>
+	<p class="alert alert-warning"><strong>Enable Javascript:</strong> Javascript is required to use MCGG VS.</p>
 </noscript>
 <form class="modal form-horizontal" action="dashboard.php" method="post">
 	<div class="modal-header" align="center">
@@ -44,7 +44,7 @@ if (!empty($_SESSION['user']) && $user = user_info($_SESSION['user'])) {
 	<div class="modal-body">
 		<?php
 		if (!empty($_GET['error']) && $_GET['error'] == 'badlogin')
-			echo '<p class="alert alert-error">Login information is incorrect.</p>';
+			echo '<p class="alert alert-error">Incorrect login information.</p>';
 		?>
 		<div class="control-group">
 			<label class="control-label" for="user">Username:</label>

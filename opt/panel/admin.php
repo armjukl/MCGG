@@ -285,15 +285,14 @@ if (isset($_POST['action'])) {
 								<option value="1.9.4">Spigot 1.9.4</option>
 								<option value="1.8.8">Spigot 1.8.8</option>
 								<option value="1.7.10">Spigot 1.7.10</option>
-								<option value="BC">BungeeCord</option>
-								<option value="NONE">None</option>
+								<option value="1.5.2">Spigot 1.5.2</option>
 							</select>
 						</div>
 					</div>
-					<button type="submit" class="btn btn-primary">Add User</button>
+					<button type="submit" class="btn btn-primary">Add user</button>
 				</form>
 				<form action="admin.php" method="post">
-					<legend>Delete a User</legend>
+					<legend>Delete a user</legend>
 					<input type="hidden" name="action" value="user-delete">
 					<select name="user" style="vertical-align: top;">
 						<?php

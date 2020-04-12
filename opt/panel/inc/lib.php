@@ -127,7 +127,7 @@ function mimetype($filename)
 		finfo_close($finfo);
 		return $mimetype;
 	} else
-		return 'application/octet-stream';
+	return 'application/octet-stream';
 }
 /**
  * Get a file size using native methods when possible
@@ -146,8 +146,8 @@ function getsize($file)
 			$f = $fsobj->GetFile($file);
 			$size = $file->Size;
 		}
-	return $size;
-}
+		return $size;
+	}
 /**
  * Helper for file_backread function
  * @param  string $haystack
@@ -214,17 +214,17 @@ function file_download($url, $path)
 		if ($newf)
 			while (!feof($file))
 				fwrite($newf, fread($file, 1024 * 8), 1024 * 8);
+			else
+				return false;
+		}
+		if ($file)
+			fclose($file);
 		else
 			return false;
+		if ($newf)
+			fclose($newf);
+		return $path;
 	}
-	if ($file)
-		fclose($file);
-	else
-		return false;
-	if ($newf)
-		fclose($newf);
-	return $path;
-}
 /**
  * Delete a folder and it's contents
  * (stack algorithm, faster than a recursive function)
@@ -382,13 +382,13 @@ function server_start($name)
 			// Save properties file
 			file_put_contents($user['home'] . '/server.properties', implode("\n", $prop));
 		} else {
-			// File doesn't exist, use template from ./serverbase
+			// File doesn't exist, use template from ./filebase
 			file_put_contents(
 				$user['home'] . '/server.properties',
 				str_replace(
 					'%PORT%',
 					intval($user['port']),
-					file_get_contents('serverbase/server.properties')
+					file_get_contents('filebase/server.properties')
 				)
 			);
 		}
@@ -410,7 +410,7 @@ function server_start($name)
 					intval($user['ram'] / 2), // Startup RAM
 					$user['ram']  // Maximum RAM
 				)
-		);
+			);
 	}
 }
 /**
@@ -444,17 +444,17 @@ function server_stop($name)
 			'stop' // Server command
 		) . ';' .
 			// wait 5 seconds to ensure server has saved
-			'sleep 5;' .
+		'sleep 5;' .
 			// kill process
-			sprintf(
+		sprintf(
 				KT_SCREEN_CMD_KILL, // Base command
 				escapeshellarg(KT_SCREEN_NAME_PREFIX . $name) // Screen Name		
 			) . ';' .
-			sprintf(
-				KT_SCREEN_CMD_KILL,
-				escapeshellarg(NGROK_ID . $name)
-			) . ';' .
-			'rm' . $user['home'] . '/ngrok.log; rm' . $user['home'] . '/logs/'
+		sprintf(
+			KT_SCREEN_CMD_KILL,
+			escapeshellarg(NGROK_ID . $name)
+		) . ';' .
+		'rm' . $user['home'] . '/ngrok.log; rm' . $user['home'] . '/logs/'
 	);
 }
 /**
@@ -469,11 +469,11 @@ function server_kill($name)
 			KT_SCREEN_CMD_KILL, // Base command
 			escapeshellarg(KT_SCREEN_NAME_PREFIX . $user['user']) // Screen Name
 		) . ';' .
-			sprintf(
-				KT_SCREEN_CMD_KILL,
-				escapeshellarg(NGROK_ID . $name)
-			) . ';' .
-			'rm' . $user['home'] . '/ngrok.log'
+		sprintf(
+			KT_SCREEN_CMD_KILL,
+			escapeshellarg(NGROK_ID . $name)
+		) . ';' .
+		'rm' . $user['home'] . '/ngrok.log'
 	);
 }
 /**
@@ -507,149 +507,170 @@ function server_manage_backup($name, $action, $freq, $deleteAfter)
 	}
 	switch ($action) {
 		case "create":
-			if (!check_cron_exists($name)) {
-				$freq = ($freq == 1 ? "*" : "*/" . $freq);
+		if (!check_cron_exists($name)) {
+			$freq = ($freq == 1 ? "*" : "*/" . $freq);
 				// A secret passed to the cron job to prevent people from guessing jobs on improper setups
-				$secret = hash("sha256", $user['pass']);
-				$jobFile = "php " . $_SERVER['DOCUMENT_ROOT'] . "/backup-run.php " . escapeshellarg($user['user']) . " " . escapeshellarg($secret) . " " . escapeshellarg($deleteAfter);
-				$job = "0 " . $freq . " * * * " . $jobFile;
-				create_cron($job);
-			}
-			break;
+			$secret = hash("sha256", $user['pass']);
+			$jobFile = "php " . $_SERVER['DOCUMENT_ROOT'] . "/backup-run.php " . escapeshellarg($user['user']) . " " . escapeshellarg($secret) . " " . escapeshellarg($deleteAfter);
+			$job = "0 " . $freq . " * * * " . $jobFile;
+			create_cron($job);
+		}
+		break;
 		case "delete":
-			delete_cron($name);
-			break;
+		delete_cron($name);
+		break;
 	}
 }
 /*
 888     888
 888     888
 888     888
-888     888 .d8888 b   .d88b.  888d888 .d8888b
+888     888 .d8888b   .d88b.  888d888 .d8888b
 888     888 88K      d8P  Y8b 888P"   88K
 888     888 "Y8888b. 88888888 888     "Y8888b.
 Y88b. .d88P      X88 Y8b.     888          X88
  "Y88888P"   88888P'  "Y8888  888      88888P'
 */
 // Add a new user
-function user_add($user, $pass, $role, $home, $ram = 512, $port = 25565, $version)
-{
+ function user_add($user, $pass, $role, $home, $ram = 512, $port = 25565, $version)
+ {
 	// Prevent overwriting an existing user
-	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
-		return false;
-	}
+ 	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
+ 		return false;
+ 	}
 	// Create user array
-	$user = array(
-		'user' => clean_alphanum($user),
-		'pass' => $pass,
-		'role' => $role,
-		'home' => rtrim(strtr($home, "\\", '/'), '/'),
-		'ram'  => intval($ram),
-		'port' => intval($port),
-		'key'  => '1234567890',
-		'active' => 'null',
-		'suspended' => 'false'
-	);
+ 	$user = array(
+ 		'user' => clean_alphanum($user),
+ 		'pass' => $pass,
+ 		'role' => $role,
+ 		'home' => rtrim(strtr($home, "\\", '/'), '/'),
+ 		'ram'  => intval($ram),
+ 		'port' => intval($port),
+ 		'key'  => '1234567890',
+ 		'active' => 'null',
+ 		'suspended' => 'false'
+ 	);
 	// Write to file
-	file_put_contents('data/users/' . strtolower(clean_alphanum($user['user'])) . '.json', json_encode($user));
+ 	file_put_contents('data/users/' . strtolower(clean_alphanum($user['user'])) . '.json', json_encode($user));
 	//check users home directory exists. if it doesn't we create it.
-	if (!file_exists($_POST['dir'])) {
-		mkdir($_POST['dir'], 0777, true);
-	}
+ 	if (!file_exists($_POST['dir'])) {
+ 		mkdir($_POST['dir'], 0777, true);
+ 	}
 
 	// make a ngrok config file
-	file_put_contents(
-		$_POST['dir'] . '/ngrok.yml',
-		"authtoken: 1234567890 \n
-region: ap \n
-log_level: debug \n
-log_format: logfmt \n
-log: " . $_POST['dir'] . "/ngrok.log \n
-"
-	);
+ 	file_put_contents(
+ 		$_POST['dir'] . '/ngrok.yml',
+ 		"authtoken: 1234567890 \n
+ 		region: ap \n
+ 		log_level: debug \n
+ 		log_format: logfmt \n
+ 		log: " . $_POST['dir'] . "/ngrok.log \n
+ 		"
+ 	);
 	// Accept eula
-	file_put_contents($_POST['dir'] . '/eula.txt', 'eula=TRUE');
+ 	file_put_contents($_POST['dir'] . '/eula.txt', 'eula=TRUE');
 	// Copy spigot
-	if ($_POST['version'] == '1.7.10') {
-		copy('serverbase/spigot-1.7.10.jar', $_POST['dir'] . '/spigot-1.7.10.jar');
-	} else if ($_POST['version'] == '1.8.8') {
-		copy('serverbase/spigot-1.8.8.jar', $_POST['dir'] . '/spigot-1.8.8.jar');
-	} else if ($_POST['version'] == '1.9.4') {
-		copy('serverbase/spigot-1.9.4.jar', $_POST['dir'] . '/spigot-1.9.4.jar');
-	} else if ($_POST['version'] == '1.10.2') {
-		copy('serverbase/spigot-1.10.2.jar', $_POST['dir'] . '/spigot-1.10.2.jar');
-	} else if ($_POST['version'] == '1.11.2') {
-		copy('serverbase/spigot-1.11.2.jar', $_POST['dir'] . '/spigot-1.11.2.jar');
-	} else if ($_POST['version'] == '1.12') {
-		copy('serverbase/spigot-1.12.jar', $_POST['dir'] . '/spigot-1.12.jar');
-	} else if ($_POST['version'] == '1.12.2') {
-		copy('serverbase/spigot-1.12.2.jar', $_POST['dir'] . '/spigot-1.12.2.jar');
-	} else if ($_POST['version'] == '1.14.4') {
-		copy('serverbase/spigot-1.14.4.jar', $_POST['dir'] . '/spigot-1.14.4.jar');
-	} else if ($_POST['version'] == '1.15.2') {
-		copy('serverbase/spigot-1.15.2.jar', $_POST['dir'] . '/spigot-1.15.2.jar');
-	}
-}
+ 	if ($_POST['version'] == '1.5.2')
+ 	{
+ 		copy('filebase/spigot-1.5.2.jar', $_POST['dir'] . '/spigot-1.5.2.jar');
+ 	}
+ 	else if ($_POST['version'] == '1.7.10')
+ 	{
+ 		copy('filebase/spigot-1.7.10.jar', $_POST['dir'] . '/spigot-1.7.10.jar');
+ 	}
+ 	else if ($_POST['version'] == '1.8.8')
+ 	{
+ 		copy('filebase/spigot-1.8.8.jar', $_POST['dir'] . '/spigot-1.8.8.jar');
+ 	} 
+ 	else if ($_POST['version'] == '1.9.4')
+ 	{
+ 		copy('filebase/spigot-1.9.4.jar', $_POST['dir'] . '/spigot-1.9.4.jar');
+ 	} 
+ 	else if ($_POST['version'] == '1.10.2') 
+ 	{
+ 		copy('filebase/spigot-1.10.2.jar', $_POST['dir'] . '/spigot-1.10.2.jar');
+ 	}
+ 	else if ($_POST['version'] == '1.11.2')
+ 	{
+ 		copy('filebase/spigot-1.11.2.jar', $_POST['dir'] . '/spigot-1.11.2.jar');
+ 	} 
+ 	else if ($_POST['version'] == '1.12') 
+ 	{
+ 		copy('filebase/spigot-1.12.jar', $_POST['dir'] . '/spigot-1.12.jar');
+ 	} 
+ 	else if ($_POST['version'] == '1.12.2')
+ 	{
+ 		copy('filebase/spigot-1.12.2.jar', $_POST['dir'] . '/spigot-1.12.2.jar');
+ 	}
+ 	else if ($_POST['version'] == '1.14.4')
+ 	{
+ 		copy('filebase/spigot-1.14.4.jar', $_POST['dir'] . '/spigot-1.14.4.jar');
+ 	} 
+ 	else if ($_POST['version'] == '1.15.2') 
+ 	{
+ 		copy('filebase/spigot-1.15.2.jar', $_POST['dir'] . '/spigot-1.15.2.jar');
+ 	}
+ }
 
 // Delete a user
-function user_delete($user, $user_dir)
-{
+ function user_delete($user, $user_dir)
+ {
 	// Delete user file if it exists
-	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
-		unlink('data/users/' . strtolower(clean_alphanum($user)) . '.json');
-		rmdirr($user_dir);
-		return true;
-	} else {
-		return false;
-	}
-}
+ 	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
+ 		unlink('data/users/' . strtolower(clean_alphanum($user)) . '.json');
+ 		rmdirr($user_dir);
+ 		return true;
+ 	} else {
+ 		return false;
+ 	}
+ }
 // Get user data
-function user_info($user)
-{
-	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
-		return json_decode(file_get_contents('data/users/' . strtolower(clean_alphanum($user) . '.json')), true);
-	} else {
-		return false;
-	}
-}
+ function user_info($user)
+ {
+ 	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
+ 		return json_decode(file_get_contents('data/users/' . strtolower(clean_alphanum($user) . '.json')), true);
+ 	} else {
+ 		return false;
+ 	}
+ }
 // Update user data
-function user_modify($user, $pass, $role, $home, $ram, $port, $jar = 'craftbukkit.jar', $key, $time)
-{
+ function user_modify($user, $pass, $role, $home, $ram, $port, $jar = 'craftbukkit.jar', $key, $time)
+ {
 	// check user existence
-	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
+ 	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
 		// Create user array
-		$user = array(
-			'user' => clean_alphanum($user),
-			'pass' => $pass,
-			'role' => $role,
-			'home' => $home,
-			'ram'  => intval($ram),
-			'port' => intval($port),
-			'jar'  => $jar,
-			'key'  => $key,
-			'active' => $time,
-		);
+ 		$user = array(
+ 			'user' => clean_alphanum($user),
+ 			'pass' => $pass,
+ 			'role' => $role,
+ 			'home' => $home,
+ 			'ram'  => intval($ram),
+ 			'port' => intval($port),
+ 			'jar'  => $jar,
+ 			'key'  => $key,
+ 			'active' => $time,
+ 		);
 		// Write to file
-		file_put_contents('data/users/' . strtolower(clean_alphanum($user['user'])) . '.json', json_encode($user));
-		return true;
-	} else {
-		return false;
-	}
-	if ($user['home'] != $home) {
-		copy($user['home'] . '/ngrok.yml', $home . '/ngrok.yml');
-		unlink($user['home'] . '/ngrok.yml');
-	}
-}
+ 		file_put_contents('data/users/' . strtolower(clean_alphanum($user['user'])) . '.json', json_encode($user));
+ 		return true;
+ 	} else {
+ 		return false;
+ 	}
+ 	if ($user['home'] != $home) {
+ 		copy($user['home'] . '/ngrok.yml', $home . '/ngrok.yml');
+ 		unlink($user['home'] . '/ngrok.yml');
+ 	}
+ }
 // List users
-function user_list()
-{
-	$h = scandir('data/users/');
-	$users = array();
-	foreach ($h as $f)
-		if ($f != '.' && $f != '..' && preg_match("/\.json$/", $f))
-			$users[] = preg_replace("/\.json$/", "", $f);
-	return $users;
-}
+ function user_list()
+ {
+ 	$h = scandir('data/users/');
+ 	$users = array();
+ 	foreach ($h as $f)
+ 		if ($f != '.' && $f != '..' && preg_match("/\.json$/", $f))
+ 			$users[] = preg_replace("/\.json$/", "", $f);
+ 		return $users;
+ 	}
 /*
 8888888888 d8b 888 888                    d8b
 888        Y8P 888 888                    Y8P
@@ -664,25 +685,25 @@ function user_list()
                                                         "Y88P"
 */
 // Remove non-alphanumeric characters from a string
-function clean_alphanum($s)
-{
-	return preg_replace('/([^A-Za-z0-9])/', '', $s);
-}
+                                                        function clean_alphanum($s)
+                                                        {
+                                                        	return preg_replace('/([^A-Za-z0-9])/', '', $s);
+                                                        }
 // Remove non-alphabetic characters from a string
-function clean_alpha($s)
-{
-	return preg_replace('/([^A-Za-z0-9])/', '', $s);
-}
+                                                        function clean_alpha($s)
+                                                        {
+                                                        	return preg_replace('/([^A-Za-z0-9])/', '', $s);
+                                                        }
 // Remove non-numeric characters from a string
-function clean_digit($s)
-{
-	return preg_replace('/([^0-9])/', '', $s);
-}
+                                                        function clean_digit($s)
+                                                        {
+                                                        	return preg_replace('/([^0-9])/', '', $s);
+                                                        }
 // Verify email address syntax
-function check_email($email)
-{
-	return filter_var($email, FILTER_VALIDATE_EMAIL);
-}
+                                                        function check_email($email)
+                                                        {
+                                                        	return filter_var($email, FILTER_VALIDATE_EMAIL);
+                                                        }
 /*
  .d8888b.                            888                                              888
 d88P  Y88b                           888                                              888
@@ -697,32 +718,32 @@ Y88b  d88P 888     Y88b 888 888 d88P Y88b. Y88..88P Y88b 888 888    888  888 888
                     "Y88P"  888                      "Y88P"                  888                "Y88P"
 */
 // Generate a Base-64 salt string
-function base64_salt($len = 22)
-{
-	$characterList = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/';
-	$salt = '';
-	for ($i = 0; $i < $len; $i++)
-		$salt .= $characterList{
-			mt_rand(0, (strlen($characterList) - 1))};
-	return $salt;
-}
+                    function base64_salt($len = 22)
+                    {
+                    	$characterList = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/';
+                    	$salt = '';
+                    	for ($i = 0; $i < $len; $i++)
+                    		$salt .= $characterList{
+                    			mt_rand(0, (strlen($characterList) - 1))};
+                    			return $salt;
+                    		}
 // Securely encrypt a password
-function bcrypt($str)
-{
-	$salt = strtr(base64_salt(22), '+', '.');
-	$work = 13;
-	$salt = sprintf('$2y$%s$%s', $work, $salt);
-	$hash = crypt($str, $salt);
-	if (strlen($hash) > 13)
-		return $hash;
-	else
-		return false;
-}
+                    		function bcrypt($str)
+                    		{
+                    			$salt = strtr(base64_salt(22), '+', '.');
+                    			$work = 13;
+                    			$salt = sprintf('$2y$%s$%s', $work, $salt);
+                    			$hash = crypt($str, $salt);
+                    			if (strlen($hash) > 13)
+                    				return $hash;
+                    			else
+                    				return false;
+                    		}
 // Verify a bcrypt-encyrpted string
-function bcrypt_verify($str, $hash)
-{
-	return (crypt($str, $hash) === $hash);
-}
+                    		function bcrypt_verify($str, $hash)
+                    		{
+                    			return (crypt($str, $hash) === $hash);
+                    		}
 /*
 8888888888 888                   
 888        888                   

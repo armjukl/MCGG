@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 echo "!----- Syncing files to Dropbox -----!"
-./dropbox upload /app/panel/data/users/* /mcgg/users/
+./dropbox upload /app/panel/data/users/* /mcgg-vs/users/
 sleep 3
 zip -r backup.zip server/*
 sleep 3
-./dropbox upload backup.zip /mcgg/server
+./dropbox upload backup.zip /mcgg-vs/server
 rm backup.zip

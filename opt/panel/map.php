@@ -12,14 +12,14 @@ if (empty($_SESSION['user']) || !$user = user_info($_SESSION['user'])) {
 if(isset($_POST['action'])) {
 	if ($_POST['action'] == 'dynmap') {
 		$dir = $user['home'];
-		copy('serverbase/dynmap.jar',$dir.'/plugins/dynmap.jar');
+		copy('filebase/dynmap.jar',$dir.'/plugins/dynmap.jar');
 	}
 }
 
 ?><!doctype html>
 <html>
 <head>
-	<title>Map | MCGG</title>
+	<title>Map | MCGG VS</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
