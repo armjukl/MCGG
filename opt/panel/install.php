@@ -34,10 +34,10 @@ if (!empty($_POST['user'])) {
 <?php } elseif (!empty($_POST['user'])) { ?>
 	<div class="modal">
 		<div class="modal-header">
-			<h3>Install MCHostPanel</h3>
+			<h3>Install MCGG VS</h3>
 		</div>
 		<div class="modal-body">
-			<p>MCHostPanel has been installed, and you are now logged in.</p>
+			<p>MCGG VS has been installed, and you are now logged in.</p>
 		</div>
 		<div class="modal-footer">
 			<a class="btn btn-success" href="dashboard.php">Continue to Panel</a>
@@ -46,7 +46,7 @@ if (!empty($_POST['user'])) {
 <?php } else { ?>
 	<form class="modal form-horizontal" action="install.php" method="post">
 		<div class="modal-header">
-			<h3>Install MCHostPanel</h3>
+			<h3>Install MCGG VS</h3>
 		</div>
 		<div class="modal-body">
 			<legend>Administrator User</legend>
