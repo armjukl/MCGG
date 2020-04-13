@@ -2,7 +2,7 @@
 require_once 'inc/lib.php';
 if (!empty($_POST['user'])) {
 	session_start();
-	user_add($_POST['user'], $_POST['pass'], 'admin', $_POST['dir'], $_POST['ram'], $_POST['port'], $_POST['version']);
+	user_add($_POST['user'], $_POST['pass'], 'admin', '/app/server/', $_POST['ram'], $_POST['port'], $_POST['version']);
 	file_put_contents(".installed", "");
 	$_SESSION['user'] = clean_alphanum($_POST['user']);
 }
@@ -71,24 +71,13 @@ if (!empty($_POST['user'])) {
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label" for="dir">Home Directory</label>
-
-				<div class="controls">
-					<div class="input-prepend">
-						<span class="add-on"><i class="icon-folder-open"></i></span>
-						<input class="span2" type="text" name="dir" id="dir" value="/app/server/">
-					</div>
-				</div>
-			</div>
-			<div class="control-group">
 				<label class="control-label" for="ram">Server Memory</label>
 
 				<div class="controls">
 					<div class="input-append">
-						<input class="span2" type="number" name="ram" id="ram" value="512">
+						<input class="span2" type="number" min="256" name="ram" id="ram" value="1024">
 						<span class="add-on">MB</span>
 					</div>
-					<span class="text-info">0 MB = No Server</span>
 				</div>
 			</div>
 			<div class="control-group">
@@ -98,7 +87,6 @@ if (!empty($_POST['user'])) {
 					<div class="input-prepend">
 						<input class="span2" type="number" name="port" id="port" min="1000" value="25565">
 				 	</div>
-					<span class="text-info">0 = No Server</span>
 				</div>
 			</div>
 			<div class="control-group">
