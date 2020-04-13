@@ -39,7 +39,7 @@ if (!empty($_SESSION['user']) && $user = user_info($_SESSION['user'])) {
 </noscript>
 <form class="modal form-horizontal" action="dashboard.php" method="post">
 	<div class="modal-header" align="center">
-		<h1><i class="fa fa-server" aria-hidden="true"></i> MC<span style="color:gold">GG</span></h1>
+		<h1><i class="fa fa-server" aria-hidden="true"></i> MCGG<span style="color:orange"> VS</span></h1>
 	</div>
 	<div class="modal-body">
 		<?php
