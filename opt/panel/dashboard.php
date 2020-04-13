@@ -275,21 +275,6 @@ if(isset($_POST['key'])) {
 								<button class="btn btn-large btn-warning ht" id="btn-srv-restart" title="Restart" disabled><i class="icon-refresh"></i></button>
 							</div>
 						</div>
-						<p>JAR File</p>
-						<select id="server-jar">
-							<?php
-								$jars = scandir('server');
-								foreach($jars as $file) {
-									if(substr($file, -4) == '.jar') {
-										if((!empty($user['jar']) && $user['jar'] == $file) || (empty($user['jar']) && $file == 'craftbukkit.jar')) {
-											echo "<option value=\"$file\" selected>$file</option>";
-										} else {
-											echo "<option value=\"$file\">$file</option>";
-										}
-									} else echo 'No jar file detected.';
-								}
-							?>
-						</select>
 				<div class="control-group">
 					<label class="control-label" for="ram">ngrok key:<?php if(empty($user['key']) || $user['key']==1234567890) { echo ' - To make the server work you need a ngrok key.'; } ?></label>
 
