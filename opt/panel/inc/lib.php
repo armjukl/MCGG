@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) Alan Hardman 2013-2016
  * @author Alan Hardman <alan@phpizza.com>
@@ -34,9 +33,8 @@ date_default_timezone_set('Asia/Bangkok');
  * @param  string $home
  * @return bool
  */
-function file_rename($path, $newname, $home)
-{
-	return rename($home . $path, $home . rtrim($path, basename($path)) . $newname);
+function file_rename($path,$newname,$home) {
+	return rename($home.$path,$home.rtrim($path,basename($path)).$newname);
 }
 /**
  * Download a user's file
@@ -45,21 +43,20 @@ function file_rename($path, $newname, $home)
  * @param  boolean $force
  * @return void
  */
-function download($path, $home, $force = true)
-{
-	if (is_file($home . $path) && $force) {
+function download($path,$home,$force = true) {
+	if(is_file($home.$path) && $force) {
 		header('Content-type: application/octet-stream');
-		header('Content-Disposition: attachment; filename="' . basename($path) . '";');
+		header('Content-Disposition: attachment; filename="'.basename($path).'";');
 		header('Content-Transfer-Encoding: binary');
-		readfile($home . $path);
-	} elseif (is_file($home . $path)) {
-		header('Content-type: ' . mimetype($home . $path));
-		readfile($home . $path);
+		readfile($home.$path);
+	} elseif(is_file($home.$path)) {
+		header('Content-type: '.mimetype($home.$path));
+		readfile($home.$path);
 	} else {
-		header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+		header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
 		header('Status: 404 Not Found');
 		$_SERVER['REDIRECT_STATUS'] = 404;
-		if (!$force)
+		if(!$force)
 			echo 'The requested file is not available.';
 	}
 }
@@ -68,8 +65,7 @@ function download($path, $home, $force = true)
  * @param  string $filename
  * @return string
  */
-function mimetype($filename)
-{
+function mimetype($filename) {
 	$mime_types = array(
 		'txt' => 'text/plain',
 		'htm' => 'text/html',
@@ -118,16 +114,16 @@ function mimetype($filename)
 		'odt' => 'application/vnd.oasis.opendocument.text',
 		'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
 	);
-	$ext = strtolower(array_pop(explode('.', $filename)));
-	if (array_key_exists($ext, $mime_types)) {
+	$ext = strtolower(array_pop(explode('.',$filename)));
+	if(array_key_exists($ext, $mime_types)) {
 		return $mime_types[$ext];
-	} elseif (function_exists('finfo_open')) {
+	} elseif(function_exists('finfo_open')) {
 		$finfo = finfo_open(FILEINFO_MIME);
 		$mimetype = finfo_file($finfo, $filename);
 		finfo_close($finfo);
 		return $mimetype;
 	} else
-	return 'application/octet-stream';
+		return 'application/octet-stream';
 }
 /**
  * Get a file size using native methods when possible
@@ -135,19 +131,18 @@ function mimetype($filename)
  * @param  string $file
  * @return int
  */
-function getsize($file)
-{
+function getsize($file) {
 	$size = filesize($file);
-	if ($size < 0)
-		if (!(strtoupper(substr(PHP_OS, 0, 3)) == 'WIN'))
+	if($size < 0)
+		if(!(strtoupper(substr(PHP_OS,0,3))=='WIN'))
 			$size = trim(`stat -c%s $file`);
 		else {
 			$fsobj = new COM('Scripting.FileSystemObject');
 			$f = $fsobj->GetFile($file);
 			$size = $file->Size;
 		}
-		return $size;
-	}
+	return $size;
+}
 /**
  * Helper for file_backread function
  * @param  string $haystack
@@ -155,15 +150,10 @@ function getsize($file)
  * @param  int    $x
  * @return string|bool
  */
-function __file_backread_helper(&$haystack, $needle, $x)
-{
-	$pos = 0;
-	$cnt = 0;
-	while ($cnt < $x && ($pos = strpos($haystack, $needle, $pos)) !== false) {
-		$pos++;
-		$cnt++;
-	}
-	return $pos == false ? false : substr($haystack, $pos, strlen($haystack));
+function __file_backread_helper(&$haystack,$needle,$x) {
+    $pos=0;$cnt=0;
+    while($cnt < $x && ($pos=strpos($haystack,$needle,$pos))!==false){$pos++;$cnt++;}
+    return $pos==false ? false:substr($haystack,$pos,strlen($haystack));
 }
 /**
  * Read n lines from the end of a file
@@ -172,33 +162,30 @@ function __file_backread_helper(&$haystack, $needle, $x)
  * @param  int    $fsize
  * @return string
  */
-function file_backread($file, $lines, &$fsize = 0)
-{
-	$f = fopen($file, 'r');
-	if (!$f) return array();
-	$splits = $lines * 50;
-	if ($splits > 10000) $splits = 10000;
-	$fsize = filesize($file);
-	$pos = $fsize;
-	$buff1 = array();
-	$cnt = 0;
-	while ($pos) {
-		$pos = $pos - $splits;
-		if ($pos < 0) {
-			$splits += $pos;
-			$pos = 0;
-		}
-		fseek($f, $pos);
-		$buff = fread($f, $splits);
-		if (!$buff) break;
-		$lines -= substr_count($buff, "\n");
-		if ($lines <= 0) {
-			$buff1[] = __file_backread_helper($buff, "\n", abs($lines) + 1);
-			break;
-		}
-		$buff1[] = $buff;
-	}
-	return str_replace("\r", '', implode('', array_reverse($buff1)));
+function file_backread($file,$lines,&$fsize=0){
+    $f=fopen($file,'r');
+    if(!$f)return Array();
+    $splits=$lines*50;
+    if($splits>10000)$splits=10000;
+    $fsize=filesize($file);
+    $pos=$fsize;
+    $buff1=Array();
+    $cnt=0;
+    while($pos)
+    {
+        $pos=$pos-$splits;
+        if($pos<0){ $splits+=$pos; $pos=0;}
+        fseek($f,$pos);
+        $buff=fread($f,$splits);
+        if(!$buff)break;
+        $lines -= substr_count($buff, "\n");
+        if($lines <= 0) {
+            $buff1[] = __file_backread_helper($buff,"\n",abs($lines)+1);
+            break;
+        }
+        $buff1[] = $buff;
+    }
+    return str_replace("\r",'',implode('',array_reverse($buff1)));
 }
 /**
  * Force download of a file to the browser
@@ -206,60 +193,58 @@ function file_backread($file, $lines, &$fsize = 0)
  * @param  string $path
  * @return string|bool
  */
-function file_download($url, $path)
-{
-	$file = fopen($url, 'rb');
-	if ($file) {
-		$newf = fopen($path, 'wb');
-		if ($newf)
-			while (!feof($file))
-				fwrite($newf, fread($file, 1024 * 8), 1024 * 8);
-			else
-				return false;
-		}
-		if ($file)
-			fclose($file);
+function file_download($url,$path) {
+	$file = fopen($url,'rb');
+	if($file) {
+		$newf = fopen($path,'wb');
+		if($newf)
+			while(!feof($file))
+				fwrite($newf,fread($file,1024*8),1024*8);
 		else
 			return false;
-		if ($newf)
-			fclose($newf);
-		return $path;
 	}
+	if($file)
+		fclose($file);
+	else
+		return false;
+	if($newf)
+		fclose($newf);
+	return $path;
+}
 /**
  * Delete a folder and it's contents
  * (stack algorithm, faster than a recursive function)
  * @param  string $dirname
  * @return bool
  */
-function rmdirr($dirname)
-{
+function rmdirr($dirname) {
 	// Sanity check
-	if (!file_exists($dirname))
+	if(!file_exists($dirname))
 		return false;
 	// Simple delete for a file
-	if (is_file($dirname) || is_link($dirname))
+	if(is_file($dirname) || is_link($dirname))
 		return unlink($dirname);
 	// Create and iterate stack
 	$stack = array($dirname);
-	while ($entry = array_pop($stack)) {
+	while($entry = array_pop($stack)) {
 		// Watch for symlinks
-		if (is_link($entry)) {
+		if(is_link($entry)) {
 			unlink($entry);
 			continue;
 		}
 		// Attempt to remove the directory
-		if (@rmdir($entry))
-			continue;
+		if(@rmdir($entry))
+		continue;
 		// Otherwise add it to the stack
 		$stack[] = $entry;
 		$dh = opendir($entry);
-		while (false !== $child = readdir($dh)) {
+		while(false !== $child = readdir($dh)) {
 			// Ignore pointers
-			if ($child === '.' || $child === '..')
+			if($child === '.' || $child === '..')
 				continue;
 			// Unlink files and add directories to stack
 			$child = $entry . DIRECTORY_SEPARATOR . $child;
-			if (is_dir($child) && !is_link($child))
+			if(is_dir($child) && !is_link($child))
 				$stack[] = $child;
 			else
 				unlink($child);
@@ -283,8 +268,7 @@ Y88b  d88P 888    Y88..88P 888  888
  * Creates a MCHostPanel cron job
  * @param string $job A fully formatted cron job
  */
-function create_cron($job)
-{
+function create_cron($job) {
 	$output = shell_exec('crontab -l');
 	file_put_contents("/tmp/crontab.txt", $output . $job . PHP_EOL);
 	echo exec("crontab /tmp/crontab.txt");
@@ -293,8 +277,7 @@ function create_cron($job)
  * Deletes a MCHostPanel cron job
  * @param string $name
  */
-function delete_cron($name)
-{
+function delete_cron($name) {
 	$output = shell_exec('crontab -l');
 	$output = preg_replace("/^.*backup-run\.php " . preg_quote(escapeshellarg($name)) . "(.*)[\r\n]/mi", "", $output);
 	file_put_contents("/tmp/crontab.txt", $output);
@@ -305,8 +288,7 @@ function delete_cron($name)
  * @param string $name
  * @return bool on match
  */
-function check_cron_exists($name)
-{
+function check_cron_exists($name) {
 	$output = shell_exec('crontab -l');
 	return (preg_match("/backup-run\.php " . preg_quote(escapeshellarg($name)) . "/i", $output));
 }
@@ -315,9 +297,8 @@ function check_cron_exists($name)
  * @param string $name
  * @return array on match
  */
-function get_cron($name)
-{
-	if (check_cron_exists($name)) {
+function get_cron($name) {
+	if(check_cron_exists($name)) {
 		$output = shell_exec('crontab -l');
 		preg_match("/^.*backup-run\.php " . preg_quote(escapeshellarg($name)) . "(.*)/mi", $output, $matches);
 		$parts = explode(" ", $matches[0]);
@@ -347,18 +328,17 @@ Y88b  d88P Y8b.     888      Y8bd8P  Y8b.     888          X88
  * Start a server with a given username
  * @param string $name
  */
-function server_start($name)
-{
+function server_start($name) {
 	// Get user details
 	$user = user_info($name);
 	// Make sure server isn't already running
-	if (server_running($user['user']))
+	if(server_running($user['user']))
 		return false;
 	// Check that server has a .jar, selecting the first .jar in the directory if one has not been set
-	if (empty($user['jar'])) {
-		$files = scandir('server');
-		foreach ($files as $file) {
-			if (substr($file, -4) == '.jar') {
+	if(empty($user['jar'])) {
+		$files = scandir($user['home']);
+		foreach($files as $file) {
+			if(substr($file, -4) == '.jar') {
 				$jar = $file;
 				break;
 			}
@@ -366,52 +346,51 @@ function server_start($name)
 	} else {
 		$jar = $user['jar'];
 	}
-	if (is_file('server' . '/' . $jar)) {
+	if(is_file($user['home'].'/'.$jar)) {
 		// Verify server.properties (Prevent user from modifying port)
-		if (is_file('server' . '/server.properties')) {
-			$prop = file('server' . '/server.properties', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if(is_file($user['home'].'/server.properties')) {
+			$prop = file($user['home'].'/server.properties',FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
 			// Remove any port setting
-			foreach ($prop as $i => $p) {
-				if (strpos($p, 'server-port') !== false) {
+			foreach($prop as $i=>$p) {
+				if(strpos($p,'server-port')!==false) {
 					unset($prop[$i]);
 					continue;
 				}
 			}
 			// Add user's port
-			$prop[] = 'server-port=' . intval($user['port']);
+			$prop[] = 'server-port='.intval($user['port']);
 			// Save properties file
-			file_put_contents('server' . '/server.properties', implode("\n", $prop));
+			file_put_contents($user['home'].'/server.properties',implode("\n",$prop));
 		} else {
-			// File doesn't exist, use template from ./filebase
+			// File doesn't exist, use template from ./serverbase
 			file_put_contents(
-				'server' . '/server.properties',
+				$user['home'].'/server.properties',
 				str_replace(
 					'%PORT%',
 					intval($user['port']),
-					file_get_contents('filebase/server.properties')
+					file_get_contents('serverbase/server.properties')
 				)
 			);
 		}
-
+		
 		// remove old logs
-		$scan = scandir('server' . '/logs');
-		foreach ($scan as $file) {
-			if ($file != '.' && $file != '..');
-			if ($file != 'lastest.log') unlink('server' . '/logs/' . $file);
+		$scan = scandir($user['home'].'/logs');
+		foreach($scan as $file) {
+			if($file !='.' && $file !='..');
+			if($file != 'lastest.log') unlink($user['home'].'/logs/'.$file);
 		}
 		// Launch server process in a detached GNU Screen
 		shell_exec(
 			// this will start the ngrok
-			'screen -dmS mc.scid-' . $user['user'] . ' ./ngrok tcp -config=' . 'server' . '/ngrok.yml ' . $user['port'] . ';' .
-				'cd ' . escapeshellarg('server') . '; ' .
-				// Change to server directory
-				sprintf(
-					str_replace('craftbukkit.jar', $jar, KT_SCREEN_CMD_START), // Base command
-					escapeshellarg(KT_SCREEN_NAME_PREFIX . $user['user']), // Screen Name
-					intval($user['ram'] / 2), // Startup RAM
-					$user['ram']  // Maximum RAM
-				)
-			);
+			'screen -dmS mc.scid-'.$user['user'].' ./ngrok tcp -config='.$user['home'].'/ngrok.yml '.$user['port'].';'.
+			'cd '.escapeshellarg($user['home']).'; '. // Change to server directory
+			sprintf(
+				str_replace('craftbukkit.jar', $jar, KT_SCREEN_CMD_START), // Base command
+				escapeshellarg(KT_SCREEN_NAME_PREFIX.$user['user']), // Screen Name
+				intval($user['ram']/2), // Startup RAM
+				$user['ram']  // Maximum RAM
+			)
+		);
 	}
 }
 /**
@@ -419,13 +398,12 @@ function server_start($name)
  * @param string $name
  * @param string $cmd
  */
-function server_cmd($name, $cmd)
-{
+function server_cmd($name,$cmd) {
 	shell_exec(
 		sprintf(
 			KT_SCREEN_CMD_EXEC, // Base command
-			KT_SCREEN_NAME_PREFIX . $name, // Screen Name
-			str_replace(array('\\', '"'), array('\\\\', '\\"'), (get_magic_quotes_gpc() ? stripslashes($cmd) : $cmd)) // Server command
+			KT_SCREEN_NAME_PREFIX.$name, // Screen Name
+			str_replace(array('\\','"'),array('\\\\','\\"'),(get_magic_quotes_gpc() ? stripslashes($cmd) : $cmd)) // Server command
 		)
 	);
 }
@@ -433,55 +411,52 @@ function server_cmd($name, $cmd)
  * Safely shut down a server
  * @param string $name
  */
-function server_stop($name)
-{
+function server_stop($name) {
 	$user = user_info($name);
-	unlink('server' . '/ngrok.log');
+	unlink($user['home'].'/ngrok.log');
 	shell_exec(
 		// "stop" command
 		sprintf(
 			KT_SCREEN_CMD_EXEC, // Base command
-			KT_SCREEN_NAME_PREFIX . $name, // Screen Name
+			KT_SCREEN_NAME_PREFIX.$name, // Screen Name
 			'stop' // Server command
-		) . ';' .
-			// wait 5 seconds to ensure server has saved
-		'sleep 5;' .
-			// kill process
+		).';'.
+		// wait 5 seconds to ensure server has saved
+		'sleep 5;'.
+		// kill process
 		sprintf(
-				KT_SCREEN_CMD_KILL, // Base command
-				escapeshellarg(KT_SCREEN_NAME_PREFIX . $name) // Screen Name		
-			) . ';' .
+			KT_SCREEN_CMD_KILL, // Base command
+			escapeshellarg(KT_SCREEN_NAME_PREFIX.$name) // Screen Name		
+		).';'.
 		sprintf(
 			KT_SCREEN_CMD_KILL,
-			escapeshellarg(NGROK_ID . $name)
-		) . ';' .
-		'rm' . 'server' . '/ngrok.log; rm' . 'server' . '/logs/'
+			escapeshellarg(NGROK_ID.$name)
+		).';'.
+		'rm'. $user['home'].'/ngrok.log; rm'. $user['home'] .'/logs/'
 	);
 }
 /**
  * Immediately kill a server with a given username (does not save anything!)
  * @param string $name
  */
-function server_kill($name)
-{
+function server_kill($name) {
 	$user = user_info($name);
 	shell_exec(
 		sprintf(
 			KT_SCREEN_CMD_KILL, // Base command
-			escapeshellarg(KT_SCREEN_NAME_PREFIX . $user['user']) // Screen Name
-		) . ';' .
+			escapeshellarg(KT_SCREEN_NAME_PREFIX.$user['user']) // Screen Name
+		).';'.
 		sprintf(
 			KT_SCREEN_CMD_KILL,
-			escapeshellarg(NGROK_ID . $name)
-		) . ';' .
-		'rm' . 'server' . '/ngrok.log'
+			escapeshellarg(NGROK_ID.$name)
+		).';'.
+		'rm'. $user['home'].'/ngrok.log'
 	);
 }
 /**
  * Kill ALL RUNNING GNU-SCREENS (under the web server user)
  */
-function server_kill_all()
-{
+function server_kill_all() {
 	shell_exec(KT_SCREEN_CMD_KILLALL);
 }
 /**
@@ -489,8 +464,7 @@ function server_kill_all()
  * @param  string $name
  * @return bool
  */
-function server_running($name)
-{
+function server_running($name) {
 	return !!strpos(`screen -ls`, KT_SCREEN_NAME_PREFIX . $name);
 }
 /**
@@ -501,176 +475,147 @@ function server_running($name)
  * @param integer $deleteAfter 0+ Number of hours to keep a backup. 0 is never delete
  * @return bool
  */
-function server_manage_backup($name, $action, $freq, $deleteAfter)
-{
-	if (!$user = user_info($name)) {
+function server_manage_backup($name, $action, $freq, $deleteAfter) {
+	if(!$user = user_info($name)) {
 		exit("Invalid user");
 	}
-	switch ($action) {
+	switch($action) {
 		case "create":
-		if (!check_cron_exists($name)) {
-			$freq = ($freq == 1 ? "*" : "*/" . $freq);
+			if(!check_cron_exists($name)) {
+				$freq = ($freq == 1 ? "*" : "*/" . $freq);
 				// A secret passed to the cron job to prevent people from guessing jobs on improper setups
-			$secret = hash("sha256", $user['pass']);
-			$jobFile = "php " . $_SERVER['DOCUMENT_ROOT'] . "/backup-run.php " . escapeshellarg($user['user']) . " " . escapeshellarg($secret) . " " . escapeshellarg($deleteAfter);
-			$job = "0 " . $freq . " * * * " . $jobFile;
-			create_cron($job);
-		}
-		break;
+				$secret = hash("sha256", $user['pass']);
+				$jobFile = "php " .$_SERVER['DOCUMENT_ROOT'] . "/backup-run.php " . escapeshellarg($user['user']) . " " . escapeshellarg($secret) . " " . escapeshellarg($deleteAfter);
+				$job = "0 " . $freq . " * * * " . $jobFile;
+				create_cron($job);
+			}
+			break;
 		case "delete":
-		delete_cron($name);
-		break;
+			delete_cron($name);
+			break;
 	}
 }
 /*
 888     888
 888     888
 888     888
-888     888 .d8888b   .d88b.  888d888 .d8888b
+888     888 .d8888 b   .d88b.  888d888 .d8888b
 888     888 88K      d8P  Y8b 888P"   88K
 888     888 "Y8888b. 88888888 888     "Y8888b.
 Y88b. .d88P      X88 Y8b.     888          X88
  "Y88888P"   88888P'  "Y8888  888      88888P'
 */
 // Add a new user
- function user_add($user, $pass, $role, $home, $ram = 512, $port = 25565, $version)
- {
+function user_add($user,$pass,$role,$home,$ram=512,$port=25565,$version) {
 	// Prevent overwriting an existing user
- 	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
- 		return false;
- 	}
+	if(is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
+		return false;
+	}
 	// Create user array
- 	$user = array(
- 		'user' => clean_alphanum($user),
- 		'pass' => $pass,
- 		'role' => $role,
- 		'home' => rtrim(strtr($home, "\\", '/'), '/'),
- 		'ram'  => intval($ram),
- 		'port' => intval($port),
- 		'key'  => '1234567890',
- 		'active' => 'null',
- 		'suspended' => 'false'
- 	);
+	$user = array(
+		'user' => clean_alphanum($user),
+		'pass' => $pass,
+		'role' => $role,
+		'home' => rtrim(strtr($home, "\\", '/'), '/'),
+		'ram'  => intval($ram),
+		'port' => intval($port),
+		'key'  => '1234567890',
+		'active'=>'null',
+		'suspended' => 'false'
+	);
 	// Write to file
- 	file_put_contents('data/users/' . strtolower(clean_alphanum($user['user'])) . '.json', json_encode($user));
+	file_put_contents('data/users/' . strtolower(clean_alphanum($user['user'])) . '.json', json_encode($user));
 	//check users home directory exists. if it doesn't we create it.
- 	if (!file_exists($_POST['dir'])) {
- 		mkdir($_POST['dir'], 0777, true);
- 	}
-
+	if (!file_exists($_POST['dir'])) {
+    mkdir($_POST['dir'], 0777, true);
+	}
+	
 	// make a ngrok config file
- 	file_put_contents(
- 		$_POST['dir'] . 'ngrok.yml',
- 		"authtoken: 1234567890\n
- 		region: ap\n
- 		log_level: debug\n
- 		log_format: logfmt\n
- 		log: " . $_POST['dir'] . "ngrok.log"
- 	);
+	file_put_contents($_POST['dir'] . '/ngrok.yml',
+"authtoken: 1234567890 \n
+region: ap \n
+log_level: debug \n
+log_format: logfmt \n
+log: ".$_POST['dir']."/ngrok.log \n
+");
 	// Accept eula
- 	file_put_contents($_POST['dir'] . '/eula.txt', 'eula=TRUE');
+	file_put_contents($_POST['dir'].'/eula.txt','eula=TRUE');
 	// Copy spigot
- 	if ($_POST['version'] == '1.5.2')
- 	{
- 		copy('filebase/spigot-1.5.2.jar', $_POST['dir'] . '/spigot-1.5.2.jar');
- 	}
- 	else if ($_POST['version'] == '1.7.10')
- 	{
- 		copy('filebase/spigot-1.7.10.jar', $_POST['dir'] . '/spigot-1.7.10.jar');
- 	}
- 	else if ($_POST['version'] == '1.8.8')
- 	{
- 		copy('filebase/spigot-1.8.8.jar', $_POST['dir'] . '/spigot-1.8.8.jar');
- 	} 
- 	else if ($_POST['version'] == '1.9.4')
- 	{
- 		copy('filebase/spigot-1.9.4.jar', $_POST['dir'] . '/spigot-1.9.4.jar');
- 	} 
- 	else if ($_POST['version'] == '1.10.2') 
- 	{
- 		copy('filebase/spigot-1.10.2.jar', $_POST['dir'] . '/spigot-1.10.2.jar');
- 	}
- 	else if ($_POST['version'] == '1.11.2')
- 	{
- 		copy('filebase/spigot-1.11.2.jar', $_POST['dir'] . '/spigot-1.11.2.jar');
- 	} 
- 	else if ($_POST['version'] == '1.12') 
- 	{
- 		copy('filebase/spigot-1.12.jar', $_POST['dir'] . '/spigot-1.12.jar');
- 	} 
- 	else if ($_POST['version'] == '1.12.2')
- 	{
- 		copy('filebase/spigot-1.12.2.jar', $_POST['dir'] . '/spigot-1.12.2.jar');
- 	}
- 	else if ($_POST['version'] == '1.14.4')
- 	{
- 		copy('filebase/spigot-1.14.4.jar', $_POST['dir'] . '/spigot-1.14.4.jar');
- 	} 
- 	else if ($_POST['version'] == '1.15.2') 
- 	{
- 		copy('filebase/spigot-1.15.2.jar', $_POST['dir'] . '/spigot-1.15.2.jar');
- 	}
- }
+	if ($_POST['version'] == '1.10.2') {
+		copy('serverbase/spigot-1.10.2.jar',$_POST['dir'].'/spigot-1.10.2.jar');
+	} else if ($_POST['version'] == '1.11.2') {
+		copy('serverbase/spigot-1.11.2.jar',$_POST['dir'].'/spigot-1.11.2.jar');
+	} else if ($_POST['version'] == '1.12.2') {
+		copy('serverbase/spigot-1.12.2.jar',$_POST['dir'].'/spigot-1.12.2.jar');
+	} else if ($_POST['version'] == '1.14.4') {
+		copy('serverbase/spigot-1.14.4.jar',$_POST['dir'].'/spigot-1.14.4.jar');
+	} else if ($_POST['version'] == '1.9.4') {
+		copy('serverbase/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar',$_POST['dir'].'/spigot-1.9.4.jar');
+	} else if ($_POST['version'] == '1.8.8') {
+		copy('serverbase/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar',$_POST['dir'].'/spigot-1.8.8.jar');
+	} else if ($_POST['version'] == '1.7.10') {
+		copy('serverbase/spigot-1.7.10-SNAPSHOT-b1657.jar',$_POST['dir'].'/spigot-1.7.10.jar');
+	} else if ($_POST['version'] == 'BC') {
+		copy('serverbase/BungeeCord.jar',$_POST['dir'].'/BungeeCord.jar');
+	}
+		
+}
 
 // Delete a user
- function user_delete($user, $user_dir)
- {
+function user_delete($user,$user_dir) {
 	// Delete user file if it exists
- 	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
- 		unlink('data/users/' . strtolower(clean_alphanum($user)) . '.json');
- 		rmdirr($user_dir);
- 		return true;
- 	} else {
- 		return false;
- 	}
- }
+	if(is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
+		unlink('data/users/' . strtolower(clean_alphanum($user)) . '.json');
+		rmdirr($user_dir);
+		return true;
+	} else {
+		return false;
+	}
+}
 // Get user data
- function user_info($user)
- {
- 	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
- 		return json_decode(file_get_contents('data/users/' . strtolower(clean_alphanum($user) . '.json')), true);
- 	} else {
- 		return false;
- 	}
- }
+function user_info($user) {
+	if(is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
+		return json_decode(file_get_contents('data/users/' . strtolower(clean_alphanum($user) . '.json')), true);
+	} else {
+		return false;
+	}
+}
 // Update user data
- function user_modify($user, $pass, $role, $home, $ram, $port, $jar = 'craftbukkit.jar', $key, $time)
- {
+function user_modify($user,$pass,$role,$home,$ram,$port,$jar='craftbukkit.jar',$key,$time) {
 	// check user existence
- 	if (is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
+	if(is_file('data/users/' . strtolower(clean_alphanum($user)) . '.json')) {
 		// Create user array
- 		$user = array(
- 			'user' => clean_alphanum($user),
- 			'pass' => $pass,
- 			'role' => $role,
- 			'home' => $home,
- 			'ram'  => intval($ram),
- 			'port' => intval($port),
- 			'jar'  => $jar,
- 			'key'  => $key,
- 			'active' => $time,
- 		);
+		$user = array(
+			'user' => clean_alphanum($user),
+			'pass' => $pass,
+			'role' => $role,
+			'home' => $home,
+			'ram'  => intval($ram),
+			'port' => intval($port),
+			'jar'  => $jar,
+			'key'  => $key,
+			'active'=> $time,
+		);
 		// Write to file
- 		file_put_contents('data/users/' . strtolower(clean_alphanum($user['user'])) . '.json', json_encode($user));
- 		return true;
- 	} else {
- 		return false;
- 	}
- 	if ('server' != $home) {
- 		copy('server' . '/ngrok.yml', $home . '/ngrok.yml');
- 		unlink('server' . '/ngrok.yml');
- 	}
- }
+		file_put_contents('data/users/' . strtolower(clean_alphanum($user['user'])) . '.json', json_encode($user));
+		return true;
+	} else {
+		return false;
+	}
+	if($user['home']!=$home) {
+		copy($user['home'].'/ngrok.yml',$home.'/ngrok.yml');
+		unlink($user['home'].'/ngrok.yml');
+	}
+}
 // List users
- function user_list()
- {
- 	$h = scandir('data/users/');
- 	$users = array();
- 	foreach ($h as $f)
- 		if ($f != '.' && $f != '..' && preg_match("/\.json$/", $f))
- 			$users[] = preg_replace("/\.json$/", "", $f);
- 		return $users;
- 	}
+function user_list() {
+	$h = scandir('data/users/');
+	$users = array();
+	foreach($h as $f)
+		if($f != '.' && $f != '..' && preg_match("/\.json$/", $f))
+			$users[] = preg_replace("/\.json$/", "", $f);
+	return $users;
+}
 /*
 8888888888 d8b 888 888                    d8b
 888        Y8P 888 888                    Y8P
@@ -685,25 +630,21 @@ Y88b. .d88P      X88 Y8b.     888          X88
                                                         "Y88P"
 */
 // Remove non-alphanumeric characters from a string
-                                                        function clean_alphanum($s)
-                                                        {
-                                                        	return preg_replace('/([^A-Za-z0-9])/', '', $s);
-                                                        }
+function clean_alphanum($s) {
+	return preg_replace('/([^A-Za-z0-9])/','',$s);
+}
 // Remove non-alphabetic characters from a string
-                                                        function clean_alpha($s)
-                                                        {
-                                                        	return preg_replace('/([^A-Za-z0-9])/', '', $s);
-                                                        }
+function clean_alpha($s) {
+	return preg_replace('/([^A-Za-z0-9])/','',$s);
+}
 // Remove non-numeric characters from a string
-                                                        function clean_digit($s)
-                                                        {
-                                                        	return preg_replace('/([^0-9])/', '', $s);
-                                                        }
+function clean_digit($s) {
+	return preg_replace('/([^0-9])/','',$s);
+}
 // Verify email address syntax
-                                                        function check_email($email)
-                                                        {
-                                                        	return filter_var($email, FILTER_VALIDATE_EMAIL);
-                                                        }
+function check_email($email) {
+	return filter_var($email,FILTER_VALIDATE_EMAIL);
+}
 /*
  .d8888b.                            888                                              888
 d88P  Y88b                           888                                              888
@@ -718,32 +659,28 @@ Y88b  d88P 888     Y88b 888 888 d88P Y88b. Y88..88P Y88b 888 888    888  888 888
                     "Y88P"  888                      "Y88P"                  888                "Y88P"
 */
 // Generate a Base-64 salt string
-                    function base64_salt($len = 22)
-                    {
-                    	$characterList = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/';
-                    	$salt = '';
-                    	for ($i = 0; $i < $len; $i++)
-                    		$salt .= $characterList{
-                    			mt_rand(0, (strlen($characterList) - 1))};
-                    			return $salt;
-                    		}
+function base64_salt($len = 22) {
+	$characterList = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/';
+	$salt = '';
+	for($i=0;$i<$len;$i++)
+		$salt.= $characterList{mt_rand(0,(strlen($characterList)-1))};
+	return $salt;
+}
 // Securely encrypt a password
-                    		function bcrypt($str)
-                    		{
-                    			$salt = strtr(base64_salt(22), '+', '.');
-                    			$work = 13;
-                    			$salt = sprintf('$2y$%s$%s', $work, $salt);
-                    			$hash = crypt($str, $salt);
-                    			if (strlen($hash) > 13)
-                    				return $hash;
-                    			else
-                    				return false;
-                    		}
+function bcrypt($str) {
+	$salt = strtr(base64_salt(22),'+','.');
+	$work = 13;
+	$salt = sprintf('$2y$%s$%s',$work,$salt);
+	$hash = crypt($str,$salt);
+	if(strlen($hash)>13)
+		return $hash;
+	else
+		return false;
+}
 // Verify a bcrypt-encyrpted string
-                    		function bcrypt_verify($str, $hash)
-                    		{
-                    			return (crypt($str, $hash) === $hash);
-                    		}
+function bcrypt_verify($str,$hash) {
+	return (crypt($str,$hash) === $hash);
+}
 /*
 8888888888 888                   
 888        888                   
@@ -754,37 +691,34 @@ Y88b  d88P 888     Y88b 888 888 d88P Y88b. Y88..88P Y88b 888 888    888  888 888
 888        888      X88 Y8b.     
 8888888888 888  88888P'  "Y8888  
 */
-function pre_more_ram($ram, $name)
-{
+function pre_more_ram($ram,$name) {
 	$user = user_info($name);
-	if ($user['role'] != 'user') {
-		user_modify($user['user'], $user['pass'], $user['role'], 'server', $ram, $user['port'], $user['jar'], $user['key']);
+	if($user['role'] != 'user') {
+		user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$ram,$user['port'],$user['jar'],$user['key']);
 		return true;
 	} else {
 		return false;
 	}
 }
-function set_key($name, $dir, $keyOLD, $keyNEW)
-{
+function set_key($name,$dir,$keyOLD,$keyNEW) {
 	$user = user_info($name);
 	$get = file_get_contents($dir);
-	$str = str_replace($keyOLD, $keyNEW, $get);
-	file_put_contents($dir, $str);
+	$str = str_replace($keyOLD,$keyNEW,$get);
+	file_put_contents($dir,$str);
 	// remodify .json file
-
+	
 }
-function ngrok_stat($name)
-{
-	$user = user_info($name);
-	if (file_exists('server' . '/ngrok.log')) {
+function ngrok_stat($name) {
+$user = user_info($name);
+	if(file_exists($user['home'].'/ngrok.log')) {
 		$searchfor = 'URL:';
-		$contents = file_get_contents('server' . '/ngrok.log');
+		$contents = file_get_contents($user['home'].'/ngrok.log');
 		$pattern = preg_quote($searchfor, '/');
 		$pattern = "/^.*$pattern.*\$/m";
-		if (preg_match_all($pattern, $contents, $matches)) {
+		if(preg_match_all($pattern, $contents, $matches)){
 			$input_line = implode("\n", $matches[0]);
 			preg_match("/\/\/(.*):[0-9]* P/", $input_line, $ngrok);
-			return str_replace("//", '', substr($ngrok[0], 0, -1));
+			return str_replace("//",'',substr($ngrok[0], 0, -1));
 		}
 	}
 }
@@ -800,4 +734,5 @@ if (!(isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' ||
    header('Location: ' . $redirect);
    exit();
 }
- **/
+**/
+?>

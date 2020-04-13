@@ -3,10 +3,6 @@ require_once 'inc/lib.php';
 
 session_start();
 
-if (!is_file(".installed")) {
-	header('Location: install.php');
-}
-
 // Destroy session on ?logout
 if (isset($_GET['logout'])) {
 	$_SESSION = array();
@@ -21,7 +17,7 @@ if (!empty($_SESSION['user']) && $user = user_info($_SESSION['user'])) {
 ?><!doctype html>
 <html>
 <head>
-	<title>Login | MCGG VS</title>
+	<title>MCHostPanel | Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
@@ -39,16 +35,17 @@ if (!empty($_SESSION['user']) && $user = user_info($_SESSION['user'])) {
 </head>
 <body>
 <noscript>
-	<p class="alert alert-warning"><strong>Enable Javascript:</strong> Javascript is required to use MCGG VS.</p>
+	<p class="alert alert-warning"><strong>Enable Javascript:</strong> Javascript is required to use MCGG.</p>
 </noscript>
 <form class="modal form-horizontal" action="dashboard.php" method="post">
 	<div class="modal-header" align="center">
-		<h1><i class="fa fa-server" aria-hidden="true"></i> MCGG<span style="color:orange"> VS</span></h1>
+		<h1><i class="fa fa-server" aria-hidden="true"></i> MC<span style="color:gold">GG</span></h1>
+		<h3><?php $count=0; foreach(user_list() as $user) { $count++; } echo $count;?> server(s) running...</h3>
 	</div>
 	<div class="modal-body">
 		<?php
 		if (!empty($_GET['error']) && $_GET['error'] == 'badlogin')
-			echo '<p class="alert alert-error">Incorrect login information.</p>';
+			echo '<p class="alert alert-error">Login information is incorrect.</p>';
 		?>
 		<div class="control-group">
 			<label class="control-label" for="user">Username:</label>

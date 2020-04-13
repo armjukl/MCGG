@@ -57,7 +57,7 @@ $edit_files = true;
 $default_timezone = 'Asia/Bangkok'; // UTC
 
 // Root path for file manager
-$root_path = 'server';
+$root_path = $user['home'];
 
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'
 // Will not working if $root_path will be outside of server document root
@@ -85,8 +85,8 @@ $GLOBALS['online_viewer'] = true;
 error_reporting(0);
 
 // include user config php file
-if (defined('FM_CONFIG') && is_file('FM_CONFIG')) {
-    include('FM_CONFIG');
+if (defined('FM_CONFIG') && is_file(FM_CONFIG)) {
+    include(FM_CONFIG);
 }
 
 //--- EDIT BELOW CAREFULLY OR DO NOT EDIT AT ALL
@@ -161,7 +161,7 @@ if ($use_auth) {
         ?>
         <div class="text-center">
             <form class="form-signin" action="" method="post" autocomplete="off">
-                <img class="mb-4" src="https://image.ibb.co/k92AFQ/h3k_logo_dark.png" alt="MCGG VS">
+                <img class="mb-4" src="https://image.ibb.co/k92AFQ/h3k_logo_dark.png" alt="MCHostPanel">
                 <h1 class="h3 mb-3 font-weight-normal">File Manager</h1>
                 <label for="fm_usr" class="sr-only">Username</label>
                 <input type="text" id="fm_usr" name="fm_usr" class="form-control" placeholder="Username" required="" autofocus="">
@@ -2174,7 +2174,7 @@ global $lang;
     <meta name="author" content="CCP Programmers">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
-    <title>File Manager | MCGG VS</title>
+    <title>MCHostPanel | File Manager</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <style>
         .form-signin {
@@ -2265,7 +2265,7 @@ global $lang;
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
-    <title>File Manager | MCGG VS</title>
+    <title>MCHostPanel | File Manager</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
     <?php if (isset($_GET['view']) && FM_USE_HIGHLIGHTJS): ?>

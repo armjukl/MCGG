@@ -40,15 +40,15 @@ if (!empty($_SESSION['user'])) {
 }
 
 if(isset($_POST['key'])) { 
-	set_key($user['user'],'server'.'/ngrok.yml',$user['key'],$_POST['key']);
-	user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$_POST['key']);
-	set_key($user['user'],'server'.'/ngrok.yml',$user['key'],$_POST['key']);
-	user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$_POST['key']);
+	set_key($user['user'],$user['home'].'/ngrok.yml',$user['key'],$_POST['key']);
+	user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$_POST['key']);
+	set_key($user['user'],$user['home'].'/ngrok.yml',$user['key'],$_POST['key']);
+	user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$_POST['key']);
 }
 ?><!doctype html>
 <html>
 <head>
-	<title>Dashboard | MCGG VS</title>
+	<title>Dashboard | MCHostPanel</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0"/>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
@@ -275,6 +275,26 @@ if(isset($_POST['key'])) {
 								<button class="btn btn-large btn-warning ht" id="btn-srv-restart" title="Restart" disabled><i class="icon-refresh"></i></button>
 							</div>
 						</div>
+						<br>Up-time:
+						<?php if(isset($user['active']) && $user['active'] !== "null") { ?>
+						<div id="DateCountdown" data-date="<?=date('Y-m-d H:i:s',$user['active'])?>" style="height: 100%; padding: 0px; box-sizing: border-box; "></div>
+						<?php } ?>
+						<text id="DateCountdownTxt"></text>
+						<p>JAR File</p>
+						<select id="server-jar">
+							<?php
+								$jars = scandir($user['home']);
+								foreach($jars as $file) {
+									if(substr($file, -4) == '.jar') {
+										if((!empty($user['jar']) && $user['jar'] == $file) || (empty($user['jar']) && $file == 'craftbukkit.jar')) {
+											echo "<option value=\"$file\" selected>$file</option>";
+										} else {
+											echo "<option value=\"$file\">$file</option>";
+										}
+									} else echo 'No jar file detected.';
+								}
+							?>
+						</select>
 				<div class="control-group">
 					<label class="control-label" for="ram">ngrok key:<?php if(empty($user['key']) || $user['key']==1234567890) { echo ' - To make the server work you need a ngrok key.'; } ?></label>
 

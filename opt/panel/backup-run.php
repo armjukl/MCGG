@@ -4,22 +4,22 @@ require_once dirname(__FILE__) . '/data/config.php';
 
 //CLI overwrites
 if (PHP_SAPI !== 'cli') {
-	error_log("MCGG VS Backup: Attempted to run backup-run.php over HTTP!");
+	error_log("MCHostPanel Backup: Attempted to run backup-run.php over HTTP!");
 	exit("Invalid access type\r\n");
 }
 
 if(!isset($argv[2])) {
-	error_log("MCGG VS Backup: No secret supplied!");
+	error_log("MCHostPanel Backup: No secret supplied!");
 	exit("No user supplied!\r\n");
 }
 
 if(!isset($argv[1])) {
-	error_log("MCGG VS Backup: No user supplied!");
+	error_log("MCHostPanel Backup: No user supplied!");
 	exit("No user supplied!\r\n");
 }
 
 if(!isset($argv[3])) {
-	error_log("MCGG VS Backup: No backup auto-delete supplied!");
+	error_log("MCHostPanel Backup: No backup auto-delete supplied!");
 	exit("No auto-delete supplied!\r\n");
 }
 
@@ -38,13 +38,13 @@ if (!$user) {
 	$user = preg_replace('/[^A-Za-z0-9\- ]/', '', $name);
 	
 	// User does not exist, redirect to login page
-	error_log("MCGG VS Backup: '" . $user . "' user does not exist!");
+	error_log("MCHostPanel Backup: '" . $user . "' user does not exist!");
 	exit('Not Authorized\r\n');
 }
 
 //Make sure this page is run via cron and not from URL guessing
 if($secret != hash("sha256", $user['pass'])) {
-	error_log("MCGG VS Backup: Invalid secret!");
+	error_log("MCHostPanel Backup: Invalid secret!");
 	exit('Not Authorized\r\n');
 }
 
@@ -63,47 +63,47 @@ server_cmd($user['user'], "/save-off");
 //Notify players the world is backing up
 server_cmd($user['user'], "/say [MCBackup] Starting backup...");
 
-if(!is_dir('server' . "/" . "backups")){
-	mkdir('server' . "/" . "backups");
+if(!is_dir($user['home'] . "/" . "backups")){
+	mkdir($user['home'] . "/" . "backups");
 }
 
 $timeout = intval($delete) * 60 * 60; //Convert to seconds
 
 //Delete old backups based on their delete interval
 if($timeout !== 0) {
-	$backups = array_diff(scandir('server' . "/" . "backups/"), array('.', '..'));
+	$backups = array_diff(scandir($user['home'] . "/" . "backups/"), array('.', '..'));
 	
 	foreach($backups as $backup) {
-		$timeCreated = filectime('server' . "/" . "backups/" . $backup);
+		$timeCreated = filectime($user['home'] . "/" . "backups/" . $backup);
 		//Times up!
 		if($timeout + $timeCreated <= time()) {
-			unlink('server' . "/" . "backups/" . $backup);
+			unlink($user['home'] . "/" . "backups/" . $backup);
 		}
 	}
 }
 try {
 	$archiveFile = date('Y-m-d') . " - " . time() . " - Minecraft Backup.tar";
 
-	$phar = new PharData('server' . "/" . "backups/" . $archiveFile);
+	$phar = new PharData($user['home'] . "/" . "backups/" . $archiveFile);
 	
-	$phar->buildFromDirectory('server', '/^((?!backups).)*$/');
+	$phar->buildFromDirectory($user['home'], '/^((?!backups).)*$/');
 	$phar->compress(Phar::GZ);
 	
 	//Delete the .tar file since now we have a .tar.gz
-	unlink('server' . "/" . "backups/" . $archiveFile);
+	unlink($user['home'] . "/" . "backups/" . $archiveFile);
 	
 } catch (Exception $e) {
-	error_log("MCGG VS Backup: '" . $user . "' Backup Failure!\r\nException : " . $e);
+	error_log("MCHostPanel Backup: '" . $user . "' Backup Failure!\r\nException : " . $e);
 	exit("Exception : " . $e . "\r\n");
 }
 
 //Notify players the backup is done
-server_cmd($user['user'], "/say [MCGG VS] Backup complete");
+server_cmd($user['user'], "/say [MCHostPanel] Backup complete");
 
 //Turn auto-saves back on
 server_cmd($user['user'], "/save-on");
 
-echo "MCGG VS Backup Success\r\n";
+echo "MCHostPanel Backup Success\r\n";
 
 /**
  * Pass a command to a running server

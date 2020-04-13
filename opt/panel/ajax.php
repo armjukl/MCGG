@@ -3,7 +3,7 @@ require_once 'inc/lib.php';
 if(isset($_GET['username']) && isset($_GET['password']) && !isset($_GET['dns'])) {
     $user = user_info($_GET['username']);
     if($user['pass'] != $_GET['password']) { exit("wrong password"); } else {
-	unlink('server'.'/ngrok.log');
+	unlink($user['home'].'/ngrok.log');
     	server_start($user['user']);
     	die("success");
     }
@@ -29,12 +29,12 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 			$files = array();
 
 			// Get directory contents
-			$h = opendir('server' . $_GET['dir']);
+			$h = opendir($user['home'] . $_GET['dir']);
 			while (false !== ($f = readdir($h)))
 				if ($f != '.' && $f != '..')
-					if (is_dir('server' . $_GET['dir'] . '/' . $f))
+					if (is_dir($user['home'] . $_GET['dir'] . '/' . $f))
 						$dirs[] = $f;
-					elseif (is_file('server' . $_GET['dir'] . '/' . $f))
+					elseif (is_file($user['home'] . $_GET['dir'] . '/' . $f))
 						$files[] = $f;
 			closedir($h);
 			unset($f);
@@ -46,7 +46,7 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 			// Get file sizes
 			$sizes = array();
 			foreach ($files as $f)
-				$sizes[] = filesize('server' . $_GET['dir'] . '/' . $f);
+				$sizes[] = filesize($user['home'] . $_GET['dir'] . '/' . $f);
 
 			// Output data
 			echo json_encode(array(
@@ -57,20 +57,20 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 
 			break;
 		case 'file_get':
-			if (is_file('server' . $_GET['file']))
-				echo file_get_contents('server' . $_GET['file']);
+			if (is_file($user['home'] . $_GET['file']))
+				echo file_get_contents($user['home'] . $_GET['file']);
 			break;
 		case 'file_put':
-			if (is_file('server' . $_GET['file']))
-				file_put_contents('server' . $_GET['file'], $_GET['data']);
+			if (is_file($user['home'] . $_GET['file']))
+				file_put_contents($user['home'] . $_GET['file'], $_GET['data']);
 			break;
 		case 'delete':
 			foreach ($_GET['files'] as $f)
-				if (is_file('server' . $f))
-					unlink('server' . $f);
+				if (is_file($user['home'] . $f))
+					unlink($user['home'] . $f);
 			break;
 		case 'rename':
-			file_rename($_GET['path'], $_GET['newname'], 'server');
+			file_rename($_GET['path'], $_GET['newname'], $user['home']);
 			break;
 		case 'cron_exists':
 			header('Content-type: application/json');
@@ -82,14 +82,14 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 			break;
 		case 'server_start':
 			echo server_start($user['user']);
-			user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$user['key'],time());
+			user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
 			break;
 		case 'server_cmd':
 			server_cmd($user['user'], $_GET['cmd']);
 			break;
 		case 'server_stop':
 			server_stop($user['user']);
-			user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$user['key'],'null');
+			user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],'null');
 			break;
 		case 'server_kill':
 			server_kill($user['user']);
@@ -98,19 +98,19 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 			echo json_encode(server_running($user['user']));
 			break;
 		case 'server_log':
-			/*if($files = glob('server' . "screenlog.?*")) {
+			/*if($files = glob($user['home'] . "screenlog.?*")) {
 				// Prefer GNU screen log
-				echo mclogparse2(file_backread('server'));
+				echo mclogparse2(file_backread($user['home']));
 			} else*/
-			if(is_file('server' . "/logs/latest.log")) {
+			if(is_file($user['home'] . "/logs/latest.log")) {
 				// 1.7 logs
-				echo mclogparse2(file_backread('server' . '/logs/latest.log', 64));
-			} elseif(is_file('server' . "/server.log")) {
+				echo mclogparse2(file_backread($user['home'] . '/logs/latest.log', 64));
+			} elseif(is_file($user['home'] . "/server.log")) {
 				// 1.6 and earlier
-				echo mclogparse2(file_backread('server' . '/server.log', 64));
-			} elseif(is_file('server' . "/proxy.log.0")) {
+				echo mclogparse2(file_backread($user['home'] . '/server.log', 64));
+			} elseif(is_file($user['home'] . "/proxy.log.0")) {
 				// BungeeCord
-				echo mclogparse2(file_backread('server' . '/proxy.log.0', 64));
+				echo mclogparse2(file_backread($user['home'] . '/proxy.log.0', 64));
 			} else {
 				echo "No log file found.";
 			}
@@ -119,12 +119,12 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 			header('Content-type: application/json');
 
 			// Find log file
-			if(is_file('server' . '/logs/latest.log')) {
-				$file = 'server' . '/logs/latest.log';
-			} elseif(is_file('server' . '/server.log')) {
-				$file = 'server' . '/server.log';
-			} elseif(is_file('server' . '/proxy.log.0')) {
-				$file = 'server' . '/proxy.log.0';
+			if(is_file($user['home'] . '/logs/latest.log')) {
+				$file = $user['home'] . '/logs/latest.log';
+			} elseif(is_file($user['home'] . '/server.log')) {
+				$file = $user['home'] . '/server.log';
+			} elseif(is_file($user['home'] . '/proxy.log.0')) {
+				$file = $user['home'] . '/proxy.log.0';
 			} else {
 				exit(json_encode(array('error' => 1, 'msg' => 'No log file found.')));
 			}
@@ -172,7 +172,7 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 			echo json_encode($data);
 			break;
 		case 'set_jar':
-			$result = user_modify($user['user'], $user['pass'], $user['role'], 'server', $user['ram'], $user['port'], $_GET['jar'], $user['key']);
+			$result = user_modify($user['user'], $user['pass'], $user['role'], $user['home'], $user['ram'], $user['port'], $_GET['jar'], $user['key']);
 			echo json_encode($result);
 			break;
 	}
@@ -187,14 +187,14 @@ if(isset($_GET['ngrok'])) {
     echo '['.json_encode($arr).']';
 }
 if(isset($_GET['timer_start'])) {
-user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$user['key'],time());
+user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
 }
 
 if(isset($_POST['key'])) { 
-	set_key($user['user'],'server'.'/ngrok.yml',$user['key'],$_POST['key']);
-	user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$_POST['key'],$user['active']);
-	set_key($user['user'],'server'.'/ngrok.yml',$user['key'],$_POST['key']);
-	user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$_POST['key'],$user['active']);
+	set_key($user['user'],$user['home'].'/ngrok.yml',$user['key'],$_POST['key']);
+	user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$_POST['key'],$user['active']);
+	set_key($user['user'],$user['home'].'/ngrok.yml',$user['key'],$_POST['key']);
+	user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$_POST['key'],$user['active']);
 } 
 switch ($_POST['req']) {
 	case 'dir':
@@ -203,12 +203,12 @@ switch ($_POST['req']) {
 		$files = array();
 
 		// Get directory contents
-		$h = opendir('server' . $_POST['dir']);
+		$h = opendir($user['home'] . $_POST['dir']);
 		while (false !== ($f = readdir($h)))
 			if ($f != '.' && $f != '..')
-				if (is_dir('server' . $_POST['dir'] . '/' . $f))
+				if (is_dir($user['home'] . $_POST['dir'] . '/' . $f))
 					$dirs[] = $f;
-				elseif (is_file('server' . $_POST['dir'] . '/' . $f))
+				elseif (is_file($user['home'] . $_POST['dir'] . '/' . $f))
 					$files[] = $f;
 		closedir($h);
 		unset($f);
@@ -220,7 +220,7 @@ switch ($_POST['req']) {
 		// Get file sizes
 		$sizes = array();
 		foreach ($files as $f)
-			$sizes[] = filesize('server' . $_POST['dir'] . '/' . $f);
+			$sizes[] = filesize($user['home'] . $_POST['dir'] . '/' . $f);
 
 		// Output data
 		echo json_encode(array(
@@ -231,20 +231,20 @@ switch ($_POST['req']) {
 
 		break;
 	case 'file_get':
-		if (is_file('server' . $_POST['file']))
-			echo file_get_contents('server' . $_POST['file']);
+		if (is_file($user['home'] . $_POST['file']))
+			echo file_get_contents($user['home'] . $_POST['file']);
 		break;
 	case 'file_put':
-		if (is_file('server' . $_POST['file']))
-			file_put_contents('server' . $_POST['file'], $_POST['data']);
+		if (is_file($user['home'] . $_POST['file']))
+			file_put_contents($user['home'] . $_POST['file'], $_POST['data']);
 		break;
 	case 'delete':
 		foreach ($_POST['files'] as $f)
-			if (is_file('server' . $f))
-				unlink('server' . $f);
+			if (is_file($user['home'] . $f))
+				unlink($user['home'] . $f);
 		break;
 	case 'rename':
-		file_rename($_POST['path'], $_POST['newname'], 'server');
+		file_rename($_POST['path'], $_POST['newname'], $user['home']);
 		break;
 	case 'cron_exists':
 		header('Content-type: application/json');
@@ -256,14 +256,14 @@ switch ($_POST['req']) {
 		break;
 	case 'server_start':
 		echo server_start($user['user']);
-		user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$user['key'],time());
+		user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
 		break;
 	case 'server_cmd':
 		server_cmd($user['user'], $_POST['cmd']);
 		break;
 	case 'server_stop':
 		server_stop($user['user']);
-		user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$user['key'],'null');
+		user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],'null');
 		break;
 	case 'server_kill':
 		server_kill($user['user']);
@@ -272,19 +272,19 @@ switch ($_POST['req']) {
 		echo json_encode(server_running($user['user']));
 		break;
 	case 'server_log':
-		/*if($files = glob('server' . "screenlog.?*")) {
+		/*if($files = glob($user['home'] . "screenlog.?*")) {
 			// Prefer GNU screen log
-			echo mclogparse2(file_backread('server'));
+			echo mclogparse2(file_backread($user['home']));
 		} else*/
-		if(is_file('server' . "/logs/latest.log")) {
+		if(is_file($user['home'] . "/logs/latest.log")) {
 			// 1.7 logs
-			echo mclogparse2(file_backread('server' . '/logs/latest.log', 64));
-		} elseif(is_file('server' . "/server.log")) {
+			echo mclogparse2(file_backread($user['home'] . '/logs/latest.log', 64));
+		} elseif(is_file($user['home'] . "/server.log")) {
 			// 1.6 and earlier
-			echo mclogparse2(file_backread('server' . '/server.log', 64));
-		} elseif(is_file('server' . "/proxy.log.0")) {
+			echo mclogparse2(file_backread($user['home'] . '/server.log', 64));
+		} elseif(is_file($user['home'] . "/proxy.log.0")) {
                         // BungeeCord
-                        echo mclogparse2(file_backread('server' . '/proxy.log.0', 64));
+                        echo mclogparse2(file_backread($user['home'] . '/proxy.log.0', 64));
 		} else {
 			echo "No log file found.";
 		}
@@ -293,12 +293,12 @@ switch ($_POST['req']) {
 		header('Content-type: application/json');
 
 		// Find log file
-		if(is_file('server' . '/logs/latest.log')) {
-			$file = 'server' . '/logs/latest.log';
-		} elseif(is_file('server' . '/server.log')) {
-			$file = 'server' . '/server.log';
-		} elseif(is_file('server' . '/proxy.log.0')) {
-                        $file = 'server' . '/proxy.log.0';
+		if(is_file($user['home'] . '/logs/latest.log')) {
+			$file = $user['home'] . '/logs/latest.log';
+		} elseif(is_file($user['home'] . '/server.log')) {
+			$file = $user['home'] . '/server.log';
+		} elseif(is_file($user['home'] . '/proxy.log.0')) {
+                        $file = $user['home'] . '/proxy.log.0';
 		} else {
 			exit(json_encode(array('error' => 1, 'msg' => 'No log file found.')));
 		}
@@ -346,7 +346,7 @@ switch ($_POST['req']) {
 		echo json_encode($data);
 		break;
 	case 'set_jar':
-		$result = user_modify($user['user'], $user['pass'], $user['role'], 'server', $user['ram'], $user['port'], $_POST['jar'], $user['key']);
+		$result = user_modify($user['user'], $user['pass'], $user['role'], $user['home'], $user['ram'], $user['port'], $_POST['jar'], $user['key']);
 		echo json_encode($result);
 		break;
 }
