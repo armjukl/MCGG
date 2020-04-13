@@ -40,10 +40,10 @@ if (!empty($_SESSION['user'])) {
 }
 
 if(isset($_POST['key'])) { 
-	set_key($user['user'],$user['home'].'/ngrok.yml',$user['key'],$_POST['key']);
-	user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$_POST['key']);
-	set_key($user['user'],$user['home'].'/ngrok.yml',$user['key'],$_POST['key']);
-	user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$_POST['key']);
+	set_key($user['user'],'server'.'/ngrok.yml',$user['key'],$_POST['key']);
+	user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$_POST['key']);
+	set_key($user['user'],'server'.'/ngrok.yml',$user['key'],$_POST['key']);
+	user_modify($user['user'],$user['pass'],$user['role'],'server',$user['ram'],$user['port'],$user['jar'],$_POST['key']);
 }
 ?><!doctype html>
 <html>
@@ -283,7 +283,7 @@ if(isset($_POST['key'])) {
 						<p>JAR File</p>
 						<select id="server-jar">
 							<?php
-								$jars = scandir($user['home']);
+								$jars = scandir('server');
 								foreach($jars as $file) {
 									if(substr($file, -4) == '.jar') {
 										if((!empty($user['jar']) && $user['jar'] == $file) || (empty($user['jar']) && $file == 'craftbukkit.jar')) {

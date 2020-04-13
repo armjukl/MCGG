@@ -63,34 +63,34 @@ server_cmd($user['user'], "/save-off");
 //Notify players the world is backing up
 server_cmd($user['user'], "/say [MCBackup] Starting backup...");
 
-if(!is_dir($user['home'] . "/" . "backups")){
-	mkdir($user['home'] . "/" . "backups");
+if(!is_dir('server' . "/" . "backups")){
+	mkdir('server' . "/" . "backups");
 }
 
 $timeout = intval($delete) * 60 * 60; //Convert to seconds
 
 //Delete old backups based on their delete interval
 if($timeout !== 0) {
-	$backups = array_diff(scandir($user['home'] . "/" . "backups/"), array('.', '..'));
+	$backups = array_diff(scandir('server' . "/" . "backups/"), array('.', '..'));
 	
 	foreach($backups as $backup) {
-		$timeCreated = filectime($user['home'] . "/" . "backups/" . $backup);
+		$timeCreated = filectime('server' . "/" . "backups/" . $backup);
 		//Times up!
 		if($timeout + $timeCreated <= time()) {
-			unlink($user['home'] . "/" . "backups/" . $backup);
+			unlink('server' . "/" . "backups/" . $backup);
 		}
 	}
 }
 try {
 	$archiveFile = date('Y-m-d') . " - " . time() . " - Minecraft Backup.tar";
 
-	$phar = new PharData($user['home'] . "/" . "backups/" . $archiveFile);
+	$phar = new PharData('server' . "/" . "backups/" . $archiveFile);
 	
-	$phar->buildFromDirectory($user['home'], '/^((?!backups).)*$/');
+	$phar->buildFromDirectory('server', '/^((?!backups).)*$/');
 	$phar->compress(Phar::GZ);
 	
 	//Delete the .tar file since now we have a .tar.gz
-	unlink($user['home'] . "/" . "backups/" . $archiveFile);
+	unlink('server' . "/" . "backups/" . $archiveFile);
 	
 } catch (Exception $e) {
 	error_log("MCGG VS Backup: '" . $user . "' Backup Failure!\r\nException : " . $e);

@@ -12,7 +12,7 @@ if (empty($_SESSION['user']) || !$user = user_info($_SESSION['user'])) {
 		$uploadedFiles = $_FILES['files'];
 		$numberOfFiles = count($uploadedFiles['name']);
 		for ($i = 0; $i < $numberOfFiles; $i++) {
-			move_uploaded_file($uploadedFiles['tmp_name'][$i], $user['home'] . $_POST['dir'] . '/' . $uploadedFiles['name'][$i]);
+			move_uploaded_file($uploadedFiles['tmp_name'][$i], 'server' . $_POST['dir'] . '/' . $uploadedFiles['name'][$i]);
 		}
 	}
 }
