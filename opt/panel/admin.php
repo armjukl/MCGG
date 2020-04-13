@@ -257,7 +257,7 @@ if (isset($_POST['action'])) {
 						<label class="control-label" for="port">Server Port</label>
 
 						<div class="controls">
-							<input class="span3" type="number" name="port" id="port" value="<?php echo $user['port'] ?>">
+							<input class="span3" type="number" name="port" id="port" value="<?php echo rand(1000, 65535) ?>">
 							<span class="text-info">0 = No Server</span>
 						</div>
 					</div>
