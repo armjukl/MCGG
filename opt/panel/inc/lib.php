@@ -567,47 +567,47 @@ Y88b. .d88P      X88 Y8b.     888          X88
  		log: " . $_POST['dir'] . "ngrok.log"
  	);
 	// Accept eula
- 	file_put_contents($_POST['dir'] . '/eula.txt', 'eula=TRUE');
+ 	file_put_contents($_POST['dir'] . 'eula.txt', 'eula=TRUE');
 	// Copy spigot
  	if ($_POST['version'] == '1.5.2')
  	{
- 		copy('filebase/spigot-1.5.2.jar', $_POST['dir'] . '/spigot-1.5.2.jar');
+ 		copy('filebase/spigot-1.5.2.jar', $_POST['dir'] . 'spigot-1.5.2.jar');
  	}
  	else if ($_POST['version'] == '1.7.10')
  	{
- 		copy('filebase/spigot-1.7.10.jar', $_POST['dir'] . '/spigot-1.7.10.jar');
+ 		copy('filebase/spigot-1.7.10.jar', $_POST['dir'] . 'spigot-1.7.10.jar');
  	}
  	else if ($_POST['version'] == '1.8.8')
  	{
- 		copy('filebase/spigot-1.8.8.jar', $_POST['dir'] . '/spigot-1.8.8.jar');
+ 		copy('filebase/spigot-1.8.8.jar', $_POST['dir'] . 'spigot-1.8.8.jar');
  	} 
  	else if ($_POST['version'] == '1.9.4')
  	{
- 		copy('filebase/spigot-1.9.4.jar', $_POST['dir'] . '/spigot-1.9.4.jar');
+ 		copy('filebase/spigot-1.9.4.jar', $_POST['dir'] . 'spigot-1.9.4.jar');
  	} 
  	else if ($_POST['version'] == '1.10.2') 
  	{
- 		copy('filebase/spigot-1.10.2.jar', $_POST['dir'] . '/spigot-1.10.2.jar');
+ 		copy('filebase/spigot-1.10.2.jar', $_POST['dir'] . 'spigot-1.10.2.jar');
  	}
  	else if ($_POST['version'] == '1.11.2')
  	{
- 		copy('filebase/spigot-1.11.2.jar', $_POST['dir'] . '/spigot-1.11.2.jar');
+ 		copy('filebase/spigot-1.11.2.jar', $_POST['dir'] . 'spigot-1.11.2.jar');
  	} 
  	else if ($_POST['version'] == '1.12') 
  	{
- 		copy('filebase/spigot-1.12.jar', $_POST['dir'] . '/spigot-1.12.jar');
+ 		copy('filebase/spigot-1.12.jar', $_POST['dir'] . 'spigot-1.12.jar');
  	} 
  	else if ($_POST['version'] == '1.12.2')
  	{
- 		copy('filebase/spigot-1.12.2.jar', $_POST['dir'] . '/spigot-1.12.2.jar');
+ 		copy('filebase/spigot-1.12.2.jar', $_POST['dir'] . 'spigot-1.12.2.jar');
  	}
  	else if ($_POST['version'] == '1.14.4')
  	{
- 		copy('filebase/spigot-1.14.4.jar', $_POST['dir'] . '/spigot-1.14.4.jar');
+ 		copy('filebase/spigot-1.14.4.jar', $_POST['dir'] . 'spigot-1.14.4.jar');
  	} 
  	else if ($_POST['version'] == '1.15.2') 
  	{
- 		copy('filebase/spigot-1.15.2.jar', $_POST['dir'] . '/spigot-1.15.2.jar');
+ 		copy('filebase/spigot-1.15.2.jar', $_POST['dir'] . 'spigot-1.15.2.jar');
  	}
  }
 
@@ -656,7 +656,7 @@ Y88b. .d88P      X88 Y8b.     888          X88
  		return false;
  	}
  	if ($user['home'] != $home) {
- 		copy($user['home'] . 'ngrok.yml', $home . '/ngrok.yml');
+ 		copy($user['home'] . 'ngrok.yml', $home . 'ngrok.yml');
  		unlink($user['home'] . 'ngrok.yml');
  	}
  }
