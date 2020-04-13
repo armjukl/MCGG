@@ -402,7 +402,7 @@ function server_start($name)
 		// Launch server process in a detached GNU Screen
 		shell_exec(
 			// this will start the ngrok
-			'screen -dmS mc.scid-' . $user['user'] . ' ./panel/ngrok tcp -config=' . $user['home'] . '/ngrok.yml ' . $user['port'] . ';' .
+			'screen -dmS mc.scid-' . $user['user'] . ' ./ngrok tcp -config=' . $user['home'] . '/ngrok.yml ' . $user['port'] . ';' .
 				'cd ' . escapeshellarg($user['home']) . '; ' .
 				// Change to server directory
 				sprintf(
