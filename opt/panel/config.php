@@ -11,7 +11,7 @@ if (empty($_SESSION['user']) || !$user = user_info($_SESSION['user'])) {
 ?><!doctype html>
 <html>
 <head>
-	<title>Configuration | MCHostPanel</title>
+	<title>Configuration | MCGG VS</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
@@ -30,7 +30,7 @@ if (empty($_SESSION['user']) || !$user = user_info($_SESSION['user'])) {
 <?php require 'inc/top.php'; ?>
 <div class="col-md-6">
 				<div class="control-group">
-					<label class="control-label" for="ram">Ngrok key <? if(empty($user['key']) || $user['key']==1234567890) { echo '- You need a ngrok key to make your server work.'; } ?></label>
+					<label class="control-label" for="ram">Ngrok key <? if(empty($user['key']) || $user['key']==1234567890) { echo '- You need a ngrok key to make the server work.'; } ?></label>
 
 					<div class="controls">
 						<div class="input-append">
