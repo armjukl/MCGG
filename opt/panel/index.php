@@ -3,6 +3,10 @@ require_once 'inc/lib.php';
 
 session_start();
 
+if (is_file(".installed")) {
+	header('Location: install.php');
+}
+
 // Destroy session on ?logout
 if (isset($_GET['logout'])) {
 	$_SESSION = array();
