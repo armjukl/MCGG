@@ -27,16 +27,16 @@ if (empty($_SESSION['user']) || !$user = user_info($_SESSION['user'])) {
 	<script src="js/bootstrap.min.js"></script>
 </head>
 <body>
-<?php require 'inc/top.php'; ?>
-<div class="col-md-6">
-				<div class="control-group">
-					<label class="control-label" for="ram">Ngrok key <? if(empty($user['key']) || $user['key']==1234567890) { echo '- You need a ngrok key to make your server work.'; } ?></label>
+	<?php require 'inc/top.php'; ?>
+	<div class="col-md-6">
+		<div class="control-group">
+			<label class="control-label" for="ram">Ngrok key <? if(empty($user['key']) || $user['key']==1234567890) { echo '- You need a ngrok key to make your server work.'; } ?></label>
 
-					<div class="controls">
-						<div class="input-append">
-							<input class="span6" type="text" name="ngrok" id="ngrok" onchange="modify(this.value)" placeholder="ngrok key.." value="<?=$user['key']?>">
-						</div>
-						<span class="text-info"><a href="//dashboard.ngrok.com/">Ngrok Dashboard</a></span>
-					</div>
+			<div class="controls">
+				<div class="input-append">
+					<input class="span6" type="text" name="ngrok" id="ngrok" onchange="modify(this.value)" placeholder="ngrok key.." value="<?=$user['key']?>">
 				</div>
-</div>
+				<span class="text-info"><a href="//dashboard.ngrok.com/">Ngrok Dashboard</a></span>
+			</div>
+		</div>
+	</div>
