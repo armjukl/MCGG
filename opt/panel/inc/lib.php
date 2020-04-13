@@ -366,10 +366,10 @@ function server_start($name)
 	} else {
 		$jar = $user['jar'];
 	}
-	if (is_file($user['home'] . '' . $jar)) {
+	if (is_file($user['home'] . '/' . $jar)) {
 		// Verify server.properties (Prevent user from modifying port)
-		if (is_file($user['home'] . 'server.properties')) {
-			$prop = file($user['home'] . 'server.properties', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if (is_file($user['home'] . '/server.properties')) {
+			$prop = file($user['home'] . '/server.properties', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 			// Remove any port setting
 			foreach ($prop as $i => $p) {
 				if (strpos($p, 'server-port') !== false) {
@@ -380,11 +380,11 @@ function server_start($name)
 			// Add user's port
 			$prop[] = 'server-port=' . intval($user['port']);
 			// Save properties file
-			file_put_contents($user['home'] . 'server.properties', implode("\n", $prop));
+			file_put_contents($user['home'] . '/server.properties', implode("\n", $prop));
 		} else {
 			// File doesn't exist, use template from ./filebase
 			file_put_contents(
-				$user['home'] . 'server.properties',
+				$user['home'] . '/server.properties',
 				str_replace(
 					'%PORT%',
 					intval($user['port']),
@@ -394,15 +394,15 @@ function server_start($name)
 		}
 
 		// remove old logs
-		$scan = scandir($user['home'] . 'logs');
+		$scan = scandir($user['home'] . '/logs');
 		foreach ($scan as $file) {
 			if ($file != '.' && $file != '..');
-			if ($file != 'lastest.log') unlink($user['home'] . 'logs/' . $file);
+			if ($file != 'lastest.log') unlink($user['home'] . '/logs/' . $file);
 		}
 		// Launch server process in a detached GNU Screen
 		shell_exec(
 			// this will start the ngrok
-			'screen -dmS mc.scid-' . $user['user'] . ' ./ngrok tcp -config=' . $user['home'] . 'ngrok.yml ' . $user['port'] . ';' .
+			'screen -dmS mc.scid-' . $user['user'] . ' ./ngrok tcp -config=' . $user['home'] . '/ngrok.yml ' . $user['port'] . ';' .
 				'cd ' . escapeshellarg($user['home']) . '; ' . // Change to server directory
 				sprintf(
 					str_replace('craftbukkit.jar', $jar, KT_SCREEN_CMD_START), // Base command
@@ -435,7 +435,7 @@ function server_cmd($name, $cmd)
 function server_stop($name)
 {
 	$user = user_info($name);
-	unlink($user['home'] . 'ngrok.log');
+	unlink($user['home'] . '/ngrok.log');
 	shell_exec(
 		// "stop" command
 		sprintf(
@@ -454,7 +454,7 @@ function server_stop($name)
 			KT_SCREEN_CMD_KILL,
 			escapeshellarg(NGROK_ID . $name)
 		) . ';' .
-		'rm' . $user['home'] . 'ngrok.log; rm' . $user['home'] . 'logs/'
+		'rm' . $user['home'] . '/ngrok.log; rm' . $user['home'] . '/logs/'
 	);
 }
 /**
@@ -473,7 +473,7 @@ function server_kill($name)
 			KT_SCREEN_CMD_KILL,
 			escapeshellarg(NGROK_ID . $name)
 		) . ';' .
-		'rm' . $user['home'] . 'ngrok.log'
+		'rm' . $user['home'] . '/ngrok.log'
 	);
 }
 /**
@@ -656,8 +656,8 @@ Y88b. .d88P      X88 Y8b.     888          X88
  		return false;
  	}
  	if ($user['home'] != $home) {
- 		copy($user['home'] . 'ngrok.yml', $home . '/ngrok.yml');
- 		unlink($user['home'] . 'ngrok.yml');
+ 		copy($user['home'] . '/ngrok.yml', $home . '/ngrok.yml');
+ 		unlink($user['home'] . '/ngrok.yml');
  	}
  }
 // List users
@@ -775,9 +775,9 @@ function set_key($name, $dir, $keyOLD, $keyNEW)
 function ngrok_stat($name)
 {
 	$user = user_info($name);
-	if (file_exists($user['home'] . 'ngrok.log')) {
+	if (file_exists($user['home'] . '/ngrok.log')) {
 		$searchfor = 'URL:';
-		$contents = file_get_contents($user['home'] . 'ngrok.log');
+		$contents = file_get_contents($user['home'] . '/ngrok.log');
 		$pattern = preg_quote($searchfor, '/');
 		$pattern = "/^.*$pattern.*\$/m";
 		if (preg_match_all($pattern, $contents, $matches)) {
