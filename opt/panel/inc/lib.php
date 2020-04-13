@@ -560,12 +560,11 @@ Y88b. .d88P      X88 Y8b.     888          X88
 	// make a ngrok config file
  	file_put_contents(
  		$_POST['dir'] . '/ngrok.yml',
- 		"authtoken: 1234567890 \n
- 		region: ap \n
- 		log_level: debug \n
- 		log_format: logfmt \n
- 		log: " . $_POST['dir'] . "/ngrok.log \n
- 		"
+ 		"authtoken: 1234567890\n
+ 		region: ap\n
+ 		log_level: debug\n
+ 		log_format: logfmt\n
+ 		log: " . $_POST['dir'] . "ngrok.log"
  	);
 	// Accept eula
  	file_put_contents($_POST['dir'] . '/eula.txt', 'eula=TRUE');
