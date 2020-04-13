@@ -275,11 +275,6 @@ if(isset($_POST['key'])) {
 								<button class="btn btn-large btn-warning ht" id="btn-srv-restart" title="Restart" disabled><i class="icon-refresh"></i></button>
 							</div>
 						</div>
-						<br>Up-time:
-						<?php if(isset($user['active']) && $user['active'] !== "null") { ?>
-						<div id="DateCountdown" data-date="<?=date('Y-m-d H:i:s',$user['active'])?>" style="height: 100%; padding: 0px; box-sizing: border-box; "></div>
-						<?php } ?>
-						<text id="DateCountdownTxt"></text>
 						<p>JAR File</p>
 						<select id="server-jar">
 							<?php
