@@ -26,7 +26,7 @@ if (!empty($_SESSION['user']) && $user = user_info($_SESSION['user'])) {
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<style type="text/css">
 		body {
-			background-image: url(img/bg.jpg);
+			background-image: url(img/background.jpg);
 			-webkit-background-size: cover;
 			-moz-background-size: cover;
 			background-size: cover;
