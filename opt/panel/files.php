@@ -42,18 +42,6 @@ $CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":
  * https://github.com/prasathmani/tinyfilemanager
  */
 
-// Default language
-$lang = 'en';
-
-// Auth with login/password (set true/false to enable/disable it)
-$use_auth = true;
-
-// Users: array('Username' => 'Password', 'Username2' => 'Password2', ...)
-$auth_users = array(
-    'admin' => password_hash('admin', PASSWORD_DEFAULT),
-    'user' => password_hash('12345', PASSWORD_DEFAULT)
-);
-
 // Readonly users (usernames array)
 $readonly_users = array(
     'user'
