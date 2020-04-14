@@ -98,6 +98,7 @@ if(isset($_POST['key'])) {
 		function modify(key) {
     		jQuery(document).ready(function($){
 			var $key = key
+			alert("The ngrok key has been set to "+$key)
 	          $.ajax({
 	                url: 'ajax.php', //window.location points to the current url. change is needed.
 	                type: 'POST',
@@ -113,12 +114,16 @@ if(isset($_POST['key'])) {
 				req: 'server_running'
 			}, function (data) {
 				if (data) {
+				    $('#DateCountdown').removeClass('hidden');
+				    $('#DateCountdownTxt').text('');
 					$('#lbl-status').text('Online').addClass('label-success').removeClass('label-important');
 					$('#btn-srv-start').prop('disabled', true);
 					$('#btn-srv-stop,#btn-srv-restart').prop('disabled', false);
 					$('#cmd').prop('disabled', false);
 					$('#ngrok_stat').text("<?=ngrok_stat($user['user'])?>");
 				} else {
+				    $('#DateCountdown').addClass('hidden');
+				    $('#DateCountdownTxt').text('Server Offline');
 					$('#lbl-status').text('Offline').addClass('label-important').removeClass('label-success');
 					$('#btn-srv-start').prop('disabled', false);
 					$('#btn-srv-stop,#btn-srv-restart').prop('disabled', true);
@@ -285,7 +290,8 @@ if(isset($_POST['key'])) {
 						<legend>Server information</legend>
 						<p><b>Status:</b> <span class="label" id="lbl-status">Checking&hellip;</span><br>
 							<b>IP:</b> <?php echo KT_LOCAL_IP . ':' . $user['port']; ?><br>
-							<b>Ngrok IP: </b><span id="ngrok_stat"></span><br>
+							<b>Ngrok IP: </b>
+							<span id="ngrok_stat"></span><br>
 							<b>Machine IP:</b> <?php echo shell_exec('curl ipinfo.io/ip')?><br>
 							<b>RAM:</b> <?php echo $user['ram'] . 'MB'; ?><br>
 							<b>Players:</b> <span id="lbl-players">Checking&hellip;</span><br>
