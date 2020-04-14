@@ -6,6 +6,11 @@
  * https://tinyfilemanager.github.io
  */
 
+if (!is_file(".installed"))
+{
+    header("Location: install.php");
+}
+
 // Auth MCHostPanel users
 require_once 'inc/lib.php';
 
