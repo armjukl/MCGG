@@ -332,8 +332,6 @@ function server_start($name) {
 	// Get user details
 	$user = user_info($name);
 	// Make sure server isn't already running
-	if(server_running($user['user']))
-		return false;
 	// Check that server has a .jar, selecting the first .jar in the directory if one has not been set
 	if(empty($user['jar'])) {
 		$files = scandir($user['home']);
@@ -391,6 +389,9 @@ function server_start($name) {
 				$user['ram']  // Maximum RAM
 			)
 		);
+	}
+	else{
+		alert('No jar file found.');
 	}
 }
 /**
