@@ -77,6 +77,6 @@ if (!empty($_SESSION['user']) && $user = user_info($_SESSION['user'])) {
 			<button class="btn btn-primary" type="submit">Login</button>
 		</div>
 	</form>
-	<small class="muted pull-left" style="position:absolute;bottom:15px;left:15px;"> <br>Guest: <?=$_SERVER['REMOTE_ADDR'] ?> <br>Time: <?=date('d/m/Y') ?></small>
+	<small class="muted pull-left" style="position:absolute;bottom:15px;left:15px;"> <br>Guest: <?=$_SERVER['REMOTE_ADDR'] ?> <br>Server Time: <?=date('d/m/Y') ?></small>
 	<script src="js/header.js"></script>
 </body>
