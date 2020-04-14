@@ -1,7 +1,7 @@
 ﻿<?php
 require_once 'inc/lib.php';
 
-if (!is_file(".installed"))
+if (is_file(".installed"))
 {
 	header("Location: install.php");
 }
