@@ -161,6 +161,11 @@ if(isset($_POST['key'])) {
 				$('#lbl-players').text('Error');
 			});
 		}
+		function timer_start() {
+			$.post('ajax.php', {
+				req: 'timer_start'
+			});
+		}
 		function server_start() {
 			$.post('ajax.php', {
 				req: 'server_start'
