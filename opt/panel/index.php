@@ -11,7 +11,7 @@ if (isset($_GET['logout'])) {
 
 // Redirect logged in users to the file manager
 if (!empty($_SESSION['user']) && $user = user_info($_SESSION['user'])) {
-	header('Location: dashboard.php');
+	header('Location: install.php');
 }
 
 ?><!doctype html>
