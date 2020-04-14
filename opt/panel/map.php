@@ -30,30 +30,30 @@ if(isset($_POST['action'])) {
 	<script src="js/bootstrap.min.js"></script>
 </head>
 <body>
-	<?php require 'inc/top.php'; ?>
-	<div class="tab-content">
-		<div class="tab-pane active">
-			<div class="container-fluid">
-				<div class="row-fluid">
-					<?php
-					if(is_file($user["home"] . "/plugins/dynmap/configuration.txt")) {
-						$config = spyc_load_file($user["home"] . "/plugins/dynmap/configuration.txt");
-						$port = $config["webserver-port"];
-						?>
-						<iframe id="map" style="width: 100%; height: 600px; border: none;" frameborder="0" src="http://<?php echo $_SERVER['HTTP_HOST']; ?>:<?php echo $port; ?>/"></iframe>
-					<?php } else { ?>
-						<p class="alert alert-danger">No dynmap configuration found.</p>
-						<form action="map.php" method="post">
-							<input type="hidden" name="action" value="dynmap">
-							<button type="submit" class="btn btn-primary">Install Dynmap</button>
-						</form>
-					<?php } ?>
-				</div>
+<?php require 'inc/top.php'; ?>
+<div class="tab-content">
+	<div class="tab-pane active">
+		<div class="container-fluid">
+			<div class="row-fluid">
+			<?php
+				if(is_file($user["home"] . "/plugins/dynmap/configuration.txt")) {
+					$config = spyc_load_file($user["home"] . "/plugins/dynmap/configuration.txt");
+					$port = $config["webserver-port"];
+			?>
+				<iframe id="map" style="width: 100%; height: 600px; border: none;" frameborder="0" src="http://<?php echo $_SERVER['HTTP_HOST']; ?>:<?php echo $port; ?>/"></iframe>
+			<?php } else { ?>
+				<p class="alert alert-danger">No dynmap configuration found.</p>
+				<form action="map.php" method="post">
+					<input type="hidden" name="action" value="dynmap">
+					<button type="submit" class="btn btn-primary">Install Dynmap</button>
+				</form>
+			<?php } ?>
 			</div>
 		</div>
 	</div>
-	<script>
-		$(document).ready(function () {
+</div>
+<script>
+	$(document).ready(function () {
 
 		// Fix sizing
 		$('#map').css('height', $(window).height() - 200 + 'px');

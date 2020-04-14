@@ -1,11 +1,6 @@
 <?php
 require_once 'inc/lib.php';
 
-if (!is_file(".installed"))
-{
-	header("Location: install.php");
-}
-
 session_start();
 if (!empty($_SESSION['user'])) {
 
@@ -60,11 +55,11 @@ if(isset($_POST['key'])) {
 	<link rel="stylesheet" href="css/bootstrap-responsive.min.css">
 	<link rel="stylesheet" href="css/smooth.css" id="smooth-css">
 	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="css/TimeCircles.css" />
+        <link rel="stylesheet" href="css/TimeCircles.css" />
 	<style type="text/css">
-		#DateCountdown {
-			height:calc(100vh);
-		}
+        #DateCountdown {
+            height:calc(100vh);
+        }
 		#cmd {
 			height: 30px;
 		}
@@ -72,58 +67,63 @@ if(isset($_POST['key'])) {
 			margin: 0;
 		}
 		.hidden {
-			display: none;
+		    display: none;
 		}
 	</style>
 	<script src="js/jquery-1.7.2.min.js"></script>
-	<script type="text/javascript" src="js/TimeCircles.js"></script>
+    <script type="text/javascript" src="js/TimeCircles.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script type="text/javascript">
-		var getHTML = function ( url, callback ) {
-			
-			// Feature detection
-			if ( !window.XMLHttpRequest ) return;
-			
-			// Create new request
-			var xhr = new XMLHttpRequest();
-			
-			// Setup callback
-			xhr.onload = function() {
-				if ( callback && typeof( callback ) === 'function' ) {
-					callback( this.responseXML );
-				}
-			}
-			
-			// Get the HTML
-			xhr.open( 'GET', url );
-			xhr.responseType = 'document';
-			xhr.send();
-			
-		};
+	    var getHTML = function ( url, callback ) {
+        
+            // Feature detection
+            if ( !window.XMLHttpRequest ) return;
+        
+            // Create new request
+            var xhr = new XMLHttpRequest();
+        
+            // Setup callback
+            xhr.onload = function() {
+                if ( callback && typeof( callback ) === 'function' ) {
+                    callback( this.responseXML );
+                }
+            }
+        
+            // Get the HTML
+            xhr.open( 'GET', url );
+            xhr.responseType = 'document';
+            xhr.send();
+        
+        };
 		function modify(key) {
-			jQuery(document).ready(function($){
-				var $key = key
-				$.ajax({
-					url: 'ajax.php', //window.location points to the current url. change is needed.
-					type: 'POST',
-					data: {
-						key: $key
-					},
-				});
-				
-			});
+    		jQuery(document).ready(function($){
+			var $key = key
+			alert("The ngrok key has been set to "+$key)
+	          $.ajax({
+	                url: 'ajax.php', //window.location points to the current url. change is needed.
+	                type: 'POST',
+	                data: {
+	                	key: $key
+	                },
+	          });
+	
+	      });
 		}
 		function updateStatus(once) {
 			$.post('ajax.php', {
 				req: 'server_running'
 			}, function (data) {
 				if (data) {
+				    $('#DateCountdown').removeClass('hidden');
+				    $('#DateCountdownTxt').text('');
 					$('#lbl-status').text('Online').addClass('label-success').removeClass('label-important');
 					$('#btn-srv-start').prop('disabled', true);
 					$('#btn-srv-stop,#btn-srv-restart').prop('disabled', false);
 					$('#cmd').prop('disabled', false);
 					$('#ngrok_stat').text("<?=ngrok_stat($user['user'])?>");
 				} else {
+				    $('#DateCountdown').addClass('hidden');
+				    $('#DateCountdownTxt').text('Server Offline');
 					$('#lbl-status').text('Offline').addClass('label-important').removeClass('label-success');
 					$('#btn-srv-start').prop('disabled', false);
 					$('#btn-srv-stop,#btn-srv-restart').prop('disabled', true);
@@ -161,11 +161,16 @@ if(isset($_POST['key'])) {
 				$('#lbl-players').text('Error');
 			});
 		}
+		function timer_start() {
+			$.post('ajax.php', {
+				req: 'timer_start'
+			}, function () {
+				updateStatus(true);
+			});
+		}
 		function server_start() {
 			$.post('ajax.php', {
 				req: 'server_start'
-			}, function () {
-				updateStatus(true);
 			});
 		}
 		function server_stop(callback) {
@@ -177,7 +182,6 @@ if(isset($_POST['key'])) {
 					callback();
 			});
 		}
-		
 		function set_jar() {
 			$.post('ajax.php', {
 				req: 'set_jar',
@@ -210,6 +214,7 @@ if(isset($_POST['key'])) {
 			$('button.ht').tooltip();
 			$('#btn-srv-start').click(function () {
 				server_start();
+				timer_start();
 				$(this).prop('disabled', true).tooltip('hide');
 			});
 			$('#btn-srv-stop').click(function () {
@@ -257,75 +262,96 @@ if(isset($_POST['key'])) {
 	</script>
 </head>
 <body>
-	<?php require 'inc/top.php'; ?>
-	<div class="tab-content">
-		<div class="tab-pane active">
-			<?php if (!empty($user['ram'])) { ?>
-				<div class="row-fluid">
-					<div class="span5">
-						<div class="well">
-							<legend>Dashboard</legend>
-							<div class="btn-toolbar">
-								<div class="btn-group">
-									<button class="btn btn-large btn-primary ht" id="btn-srv-start" title="Start" disabled><i class="icon-play"></i></button>
-									<button class="btn btn-large btn-danger ht" id="btn-srv-stop" title="Stop" disabled><i class="icon-stop"></i></button>
-								</div>
-								<div class="btn-group">
-									<button class="btn btn-large btn-warning ht" id="btn-srv-restart" title="Restart" disabled><i class="icon-refresh"></i></button>
-								</div>
+<?php require 'inc/top.php'; ?>
+<div class="tab-content">
+	<div class="tab-pane active">
+		<?php if (!empty($user['ram'])) { ?>
+			<div class="row-fluid">
+				<div class="span5">
+					<div class="well">
+						<legend>Dashboard</legend>
+						<div class="btn-toolbar">
+							<div class="btn-group">
+								<button class="btn btn-large btn-primary ht" id="btn-srv-start" title="Start" disabled><i class="icon-play"></i></button>
+								<button class="btn btn-large btn-danger ht" id="btn-srv-stop" title="Stop" disabled><i class="icon-stop"></i></button>
 							</div>
-							<div class="control-group">
-								<label class="control-label" for="ram">ngrok key:<?php if(empty($user['key']) || $user['key']==1234567890) { echo ' - To make the server work you need a ngrok key.'; } ?></label>
+							<div class="btn-group">
+								<button class="btn btn-large btn-warning ht" id="btn-srv-restart" title="Restart" disabled><i class="icon-refresh"></i></button>
+							</div>
+						</div>
+						<br>Up-time:
+						<?php if(isset($user['active']) && $user['active'] !== "null") { ?>
+						<div id="DateCountdown" data-date="<?=date('Y-m-d H:i:s',$user['active'])?>" style="height: 100%; padding: 0px; box-sizing: border-box; "></div>
+						<?php } ?>
+						<text id="DateCountdownTxt"></text>
+						<p>JAR File</p>
+						<select id="server-jar">
+							<?php
+								$jars = scandir($user['home']);
+								foreach($jars as $file) {
+									if(substr($file, -4) == '.jar') {
+										if((!empty($user['jar']) && $user['jar'] == $file) || (empty($user['jar']) && $file == 'craftbukkit.jar')) {
+											echo "<option value=\"$file\" selected>$file</option>";
+										} else {
+											echo "<option value=\"$file\">$file</option>";
+										}
+									} else echo 'No jar file detected.';
+								}
+							?>
+						</select>
+				<div class="control-group">
+					<label class="control-label" for="ram">ngrok key:<?php if(empty($user['key']) || $user['key']==1234567890) { echo ' - To make the server work you need a ngrok key.'; } ?></label>
 
-								<div class="controls">
-									<div class="input-append">
-										<input class="span6" type="text" name="ngrok" id="ngrok" onchange="modify(this.value)" placeholder="Enter your ngrok key..." value="<?=$user['key']?>">
-									</div>
-									<a class="text-info" href="https://dashboard.ngrok.com/auth">Get a ngrok key</a>
-								</div>
-							</div>
+					<div class="controls">
+						<div class="input-append">
+							<input class="span6" type="text" name="ngrok" id="ngrok" onchange="modify(this.value)" placeholder="Enter your ngrok key..." value="<?=$user['key']?>">
 						</div>
-						<div class="well">
-							<legend>Server information</legend>
-							<p><b>Status:</b> <span class="label" id="lbl-status">Checking&hellip;</span><br>
-								<b>IP:</b> <?php echo KT_LOCAL_IP . ':' . $user['port']; ?><br>
-								<b>Ngrok IP: </b><span id="ngrok_stat"></span><br>
-								<b>Machine IP:</b> <?php echo shell_exec('curl ipinfo.io/ip')?><br>
-								<b>RAM:</b> <?php echo $user['ram'] . 'MB'; ?><br>
-								<b>Players:</b> <span id="lbl-players">Checking&hellip;</span><br>
-								<b>Banner:</b><br>
-								<?php
-								$banner_Get = ngrok_stat($user['user']);
-								$banner_RemoveSpace = str_replace(" ","",$banner_Get);
-								$banner_RemoveSlash = str_replace(":","/",$banner_RemoveSpace);
-								$banner_Url = $banner_RemoveSlash;
-								echo '<img src="http://status.mclive.eu/Minecraft%20Server/'.$banner_Url.'/banner.png">';?><br>
-							</p>
-							<div class="player-list"></div>
-						</div>
-					</div>
-					<div class="span7">
-						<pre id="log" class="well well-small"></pre>
-						<form id="frm-cmd">
-							<input type="text" id="cmd" name="cmd" maxlength="250" placeholder="Enter command..." autofocus>
-						</form>
+						<span class="text-info">Get a ngrok key: <a href="//dashboard.ngrok.com/">Ngrok Dashboard</a></span>
 					</div>
 				</div>
-				<?php
-			} else if ($user['suspended'] == 'true') {
-				echo '
-				<p class="alert alert-danger">Your server got suspended.</p>
-				';
-			} else 
+					</div>
+					<div class="well">
+						<legend>Server information</legend>
+						<p><b>Status:</b> <span class="label" id="lbl-status">Checking&hellip;</span><br>
+							<b>IP:</b> <?php echo KT_LOCAL_IP . ':' . $user['port']; ?><br>
+							<b>Ngrok IP: </b>
+							<span id="ngrok_stat"></span><br>
+							<b>Machine IP:</b> <?php echo shell_exec('curl ipinfo.io/ip')?><br>
+							<b>RAM:</b> <?php echo $user['ram'] . 'MB'; ?><br>
+							<b>Players:</b> <span id="lbl-players">Checking&hellip;</span><br>
+							<b>Banner:</b><br>
+							<?php
+						 		$banner_Get = ngrok_stat($user['user']);
+						 		$banner_RemoveSpace = str_replace(" ","",$banner_Get);
+						 		$banner_RemoveSlash = str_replace(":","/",$banner_RemoveSpace);
+						 		$banner_Url = $banner_RemoveSlash;
+						 		echo '<img src="http://status.mclive.eu/Minecraft%20Server/'.$banner_Url.'/banner.png">';?><br>
+						</p>
+						<div class="player-list"></div>
+					</div>
+				</div>
+				<div class="span7">
+					<pre id="log" class="well well-small"></pre>
+					<form id="frm-cmd">
+						<input type="text" id="cmd" name="cmd" maxlength="250" placeholder="Enter command..." autofocus>
+					</form>
+				</div>
+			</div>
+		<?php
+		} else if ($user['suspended'] == 'true') {
+			echo '
+			<p class="alert alert-danger">Your server got suspended.</p>
+';
+		} else 
 			echo '
 			<p class="alert alert-info">Your account does not have a server.</p>
-			';
-			?>
-		</div>
+';
+		?>
 	</div>
-	<script>
-		$("#DateCountdown").TimeCircles();
-	</script>
+</div>
+<script>
+$("#DateCountdown").TimeCircles();
+</script>
 
 </body>
 </html>

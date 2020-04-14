@@ -7,7 +7,7 @@
 
 /* Basic Styles */
 body {
-	background: #f5f5f5 url(../img/background.jpg) 0 0 no-repeat;
+	background: #f5f5f5 url(../img/background.gif) 0 0 repeat;
 	color: black;
 }
 

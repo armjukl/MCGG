@@ -32,18 +32,18 @@ require_once 'inc/lib.php';
 // Handle actions
 switch($_GET['action']) {
 	case "start":
-	server_start($_GET['server']);
-	break;
+		server_start($_GET['server']);
+		break;
 	case "stop":
-	server_stop($_GET['server']);
-	break;
+		server_stop($_GET['server']);
+		break;
 	case "restart":
-	server_stop($_GET['server']);
-	server_start($_GET['server']);
-	break;
+		server_stop($_GET['server']);
+		server_start($_GET['server']);
+		break;
 	case "kill":
-	server_kill($_GET['server']);
-	break;
+		server_kill($_GET['server']);
+		break;
 	default:
-	die("Unknown action: {$_GET['action']}");
+		die("Unknown action: {$_GET['action']}");
 }
