@@ -186,9 +186,6 @@ if(isset($_GET['ngrok'])) {
 	$arr = array('key' => $user['key']);
 	echo '['.json_encode($arr).']';
 }
-if(isset($_GET['timer_start'])) {
-	user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
-}
 
 if(isset($_POST['key'])) { 
 	set_key($user['user'],$user['home'].'/ngrok.yml',$user['key'],$_POST['key']);
