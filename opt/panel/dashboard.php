@@ -275,26 +275,6 @@ if(isset($_POST['key'])) {
 								<button class="btn btn-large btn-warning ht" id="btn-srv-restart" title="Restart" disabled><i class="icon-refresh"></i></button>
 							</div>
 						</div>
-						<br>Up-time:
-						<?php if(isset($user['active']) && $user['active'] !== "null") { ?>
-						<div id="DateCountdown" data-date="<?=date('Y-m-d H:i:s',$user['active'])?>" style="height: 100%; padding: 0px; box-sizing: border-box; "></div>
-						<?php } ?>
-						<text id="DateCountdownTxt"></text>
-						<p>JAR File</p>
-						<select id="server-jar">
-							<?php
-								$jars = scandir($user['home']);
-								foreach($jars as $file) {
-									if(substr($file, -4) == '.jar') {
-										if((!empty($user['jar']) && $user['jar'] == $file) || (empty($user['jar']) && $file == 'craftbukkit.jar')) {
-											echo "<option value=\"$file\" selected>$file</option>";
-										} else {
-											echo "<option value=\"$file\">$file</option>";
-										}
-									} else echo 'No jar file detected.';
-								}
-							?>
-						</select>
 				<div class="control-group">
 					<label class="control-label" for="ram">ngrok key:<?php if(empty($user['key']) || $user['key']==1234567890) { echo ' - To make the server work you need a ngrok key.'; } ?></label>
 
@@ -302,7 +282,7 @@ if(isset($_POST['key'])) {
 						<div class="input-append">
 							<input class="span6" type="text" name="ngrok" id="ngrok" onchange="modify(this.value)" placeholder="Enter your ngrok key..." value="<?=$user['key']?>">
 						</div>
-						<span class="text-info">Get a ngrok key: <a href="//dashboard.ngrok.com/">Ngrok Dashboard</a></span>
+						<a class="text-info" href="https://dashboard.ngrok.com/auth">Get a ngrok key</a>
 					</div>
 				</div>
 					</div>
