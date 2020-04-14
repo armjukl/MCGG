@@ -60,7 +60,6 @@ if(isset($_POST['key'])) {
 	<link rel="stylesheet" href="css/bootstrap-responsive.min.css">
 	<link rel="stylesheet" href="css/smooth.css" id="smooth-css">
 	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="css/TimeCircles.css" />
 	<style type="text/css">
 		#DateCountdown {
 			height:calc(100vh);
