@@ -161,11 +161,6 @@ if(isset($_POST['key'])) {
 				$('#lbl-players').text('Error');
 			});
 		}
-		function timer_start() {
-			$.post('ajax.php', {
-				req: 'timer_start'
-			});
-		}
 		function server_start() {
 			$.post('ajax.php', {
 				req: 'server_start'
@@ -215,7 +210,6 @@ if(isset($_POST['key'])) {
 			$('button.ht').tooltip();
 			$('#btn-srv-start').click(function () {
 				server_start();
-				timer_start();
 				$(this).prop('disabled', true).tooltip('hide');
 			});
 			$('#btn-srv-stop').click(function () {
