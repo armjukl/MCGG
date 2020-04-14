@@ -1,29 +1,29 @@
 <?php
 require_once 'inc/lib.php';
 if(isset($_GET['username']) && isset($_GET['password']) && !isset($_GET['dns'])) {
-    $user = user_info($_GET['username']);
-    if($user['pass'] != $_GET['password']) { exit("wrong password"); } else {
-	unlink($user['home'].'/ngrok.log');
-    	server_start($user['user']);
-    	die("success");
-    }
+	$user = user_info($_GET['username']);
+	if($user['pass'] != $_GET['password']) { exit("wrong password"); } else {
+		unlink($user['home'].'/ngrok.log');
+		server_start($user['user']);
+		die("success");
+	}
 }
 if(isset($_GET['username']) && isset($_GET['password']) && isset($_GET['dns'])) {
-    $user = user_info($_GET['username']);
-    if($user['pass'] != $_GET['password']) { exit("wrong password"); } else {
-    	$dns = ngrok_stat($user['user']);
-	$dns_fix = str_replace(' ','',$dns);
-	list($dns_host,$dns_port) = explode(':',$dns_fix);
-    	echo $dns_port;
-    }
+	$user = user_info($_GET['username']);
+	if($user['pass'] != $_GET['password']) { exit("wrong password"); } else {
+		$dns = ngrok_stat($user['user']);
+		$dns_fix = str_replace(' ','',$dns);
+		list($dns_host,$dns_port) = explode(':',$dns_fix);
+		echo $dns_port;
+	}
 }
 
 session_start();
 if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
-    $user = user_info($_GET['user']);
-    if($user['pass'] != $_GET['pass']) { exit("wrong password"); } else {
-	switch ($_GET['req']) {
-		case 'dir':
+	$user = user_info($_GET['user']);
+	if($user['pass'] != $_GET['pass']) { exit("wrong password"); } else {
+		switch ($_GET['req']) {
+			case 'dir':
 			// Initial vars
 			$dirs = array();
 			$files = array();
@@ -36,68 +36,68 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 						$dirs[] = $f;
 					elseif (is_file($user['home'] . $_GET['dir'] . '/' . $f))
 						$files[] = $f;
-			closedir($h);
-			unset($f);
+					closedir($h);
+					unset($f);
 
 			// Sort data
-			sort($dirs);
-			sort($files);
+					sort($dirs);
+					sort($files);
 
 			// Get file sizes
-			$sizes = array();
-			foreach ($files as $f)
-				$sizes[] = filesize($user['home'] . $_GET['dir'] . '/' . $f);
+					$sizes = array();
+					foreach ($files as $f)
+						$sizes[] = filesize($user['home'] . $_GET['dir'] . '/' . $f);
 
 			// Output data
-			echo json_encode(array(
-				'dirs' => $dirs,
-				'files' => $files,
-				'sizes' => $sizes
-			));
+					echo json_encode(array(
+						'dirs' => $dirs,
+						'files' => $files,
+						'sizes' => $sizes
+					));
 
-			break;
-		case 'file_get':
-			if (is_file($user['home'] . $_GET['file']))
-				echo file_get_contents($user['home'] . $_GET['file']);
-			break;
-		case 'file_put':
-			if (is_file($user['home'] . $_GET['file']))
-				file_put_contents($user['home'] . $_GET['file'], $_GET['data']);
-			break;
-		case 'delete':
-			foreach ($_GET['files'] as $f)
-				if (is_file($user['home'] . $f))
-					unlink($user['home'] . $f);
-			break;
-		case 'rename':
-			file_rename($_GET['path'], $_GET['newname'], $user['home']);
-			break;
-		case 'cron_exists':
-			header('Content-type: application/json');
-			echo json_encode(check_cron_exists($_GET['user']));
-			break;
-		case 'get_cron':
-			header('Content-type: application/json');
-			echo json_encode(get_cron($_GET['user']));
-			break;
-		case 'server_start':
-			echo server_start($user['user']);
-			user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
-			break;
-		case 'server_cmd':
-			server_cmd($user['user'], $_GET['cmd']);
-			break;
-		case 'server_stop':
-			server_stop($user['user']);
-			user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],'null');
-			break;
-		case 'server_kill':
-			server_kill($user['user']);
-			break;
-		case 'server_running':
-			echo json_encode(server_running($user['user']));
-			break;
-		case 'server_log':
+					break;
+					case 'file_get':
+					if (is_file($user['home'] . $_GET['file']))
+						echo file_get_contents($user['home'] . $_GET['file']);
+					break;
+					case 'file_put':
+					if (is_file($user['home'] . $_GET['file']))
+						file_put_contents($user['home'] . $_GET['file'], $_GET['data']);
+					break;
+					case 'delete':
+					foreach ($_GET['files'] as $f)
+						if (is_file($user['home'] . $f))
+							unlink($user['home'] . $f);
+						break;
+						case 'rename':
+						file_rename($_GET['path'], $_GET['newname'], $user['home']);
+						break;
+						case 'cron_exists':
+						header('Content-type: application/json');
+						echo json_encode(check_cron_exists($_GET['user']));
+						break;
+						case 'get_cron':
+						header('Content-type: application/json');
+						echo json_encode(get_cron($_GET['user']));
+						break;
+						case 'server_start':
+						echo server_start($user['user']);
+						user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
+						break;
+						case 'server_cmd':
+						server_cmd($user['user'], $_GET['cmd']);
+						break;
+						case 'server_stop':
+						server_stop($user['user']);
+						user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],'null');
+						break;
+						case 'server_kill':
+						server_kill($user['user']);
+						break;
+						case 'server_running':
+						echo json_encode(server_running($user['user']));
+						break;
+						case 'server_log':
 			/*if($files = glob($user['home'] . "screenlog.?*")) {
 				// Prefer GNU screen log
 				echo mclogparse2(file_backread($user['home']));
@@ -115,7 +115,7 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 				echo "No log file found.";
 			}
 			break;
-		case 'server_log_bytes':
+			case 'server_log_bytes':
 			header('Content-type: application/json');
 
 			// Find log file
@@ -154,7 +154,7 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 
 			echo json_encode($return);
 
-		case 'players':
+			case 'players':
 			require_once 'inc/MinecraftQuery.class.php';
 			$mq = new MinecraftQuery();
 			try {
@@ -171,23 +171,20 @@ if(isset($_GET['user']) && isset($_GET['pass']) && isset($_GET['req'])) {
 
 			echo json_encode($data);
 			break;
-		case 'set_jar':
+			case 'set_jar':
 			$result = user_modify($user['user'], $user['pass'], $user['role'], $user['home'], $user['ram'], $user['port'], $_GET['jar'], $user['key']);
 			echo json_encode($result);
 			break;
+		}
 	}
-    }
 }
 if (!$user = user_info($_SESSION['user']))
 	exit();
 
 if(isset($_GET['ngrok'])) {
-    $user = user_info($_GET['ngrok']);
-    $arr = array('key' => $user['key']);
-    echo '['.json_encode($arr).']';
-}
-if(isset($_GET['timer_start'])) {
-user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
+	$user = user_info($_GET['ngrok']);
+	$arr = array('key' => $user['key']);
+	echo '['.json_encode($arr).']';
 }
 
 if(isset($_POST['key'])) { 
@@ -199,79 +196,79 @@ if(isset($_POST['key'])) {
 switch ($_POST['req']) {
 	case 'dir':
 		// Initial vars
-		$dirs = array();
-		$files = array();
+	$dirs = array();
+	$files = array();
 
 		// Get directory contents
-		$h = opendir($user['home'] . $_POST['dir']);
-		while (false !== ($f = readdir($h)))
-			if ($f != '.' && $f != '..')
-				if (is_dir($user['home'] . $_POST['dir'] . '/' . $f))
-					$dirs[] = $f;
-				elseif (is_file($user['home'] . $_POST['dir'] . '/' . $f))
-					$files[] = $f;
-		closedir($h);
-		unset($f);
+	$h = opendir($user['home'] . $_POST['dir']);
+	while (false !== ($f = readdir($h)))
+		if ($f != '.' && $f != '..')
+			if (is_dir($user['home'] . $_POST['dir'] . '/' . $f))
+				$dirs[] = $f;
+			elseif (is_file($user['home'] . $_POST['dir'] . '/' . $f))
+				$files[] = $f;
+			closedir($h);
+			unset($f);
 
 		// Sort data
-		sort($dirs);
-		sort($files);
+			sort($dirs);
+			sort($files);
 
 		// Get file sizes
-		$sizes = array();
-		foreach ($files as $f)
-			$sizes[] = filesize($user['home'] . $_POST['dir'] . '/' . $f);
+			$sizes = array();
+			foreach ($files as $f)
+				$sizes[] = filesize($user['home'] . $_POST['dir'] . '/' . $f);
 
 		// Output data
-		echo json_encode(array(
-			'dirs' => $dirs,
-			'files' => $files,
-			'sizes' => $sizes
-		));
+			echo json_encode(array(
+				'dirs' => $dirs,
+				'files' => $files,
+				'sizes' => $sizes
+			));
 
-		break;
-	case 'file_get':
-		if (is_file($user['home'] . $_POST['file']))
-			echo file_get_contents($user['home'] . $_POST['file']);
-		break;
-	case 'file_put':
-		if (is_file($user['home'] . $_POST['file']))
-			file_put_contents($user['home'] . $_POST['file'], $_POST['data']);
-		break;
-	case 'delete':
-		foreach ($_POST['files'] as $f)
-			if (is_file($user['home'] . $f))
-				unlink($user['home'] . $f);
-		break;
-	case 'rename':
-		file_rename($_POST['path'], $_POST['newname'], $user['home']);
-		break;
-	case 'cron_exists':
-		header('Content-type: application/json');
-		echo json_encode(check_cron_exists($_POST['user']));
-		break;
-	case 'get_cron':
-		header('Content-type: application/json');
-		echo json_encode(get_cron($_POST['user']));
-		break;
-	case 'server_start':
-		echo server_start($user['user']);
-		user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
-		break;
-	case 'server_cmd':
-		server_cmd($user['user'], $_POST['cmd']);
-		break;
-	case 'server_stop':
-		server_stop($user['user']);
-		user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],'null');
-		break;
-	case 'server_kill':
-		server_kill($user['user']);
-		break;
-	case 'server_running':
-		echo json_encode(server_running($user['user']));
-		break;
-	case 'server_log':
+			break;
+			case 'file_get':
+			if (is_file($user['home'] . $_POST['file']))
+				echo file_get_contents($user['home'] . $_POST['file']);
+			break;
+			case 'file_put':
+			if (is_file($user['home'] . $_POST['file']))
+				file_put_contents($user['home'] . $_POST['file'], $_POST['data']);
+			break;
+			case 'delete':
+			foreach ($_POST['files'] as $f)
+				if (is_file($user['home'] . $f))
+					unlink($user['home'] . $f);
+				break;
+				case 'rename':
+				file_rename($_POST['path'], $_POST['newname'], $user['home']);
+				break;
+				case 'cron_exists':
+				header('Content-type: application/json');
+				echo json_encode(check_cron_exists($_POST['user']));
+				break;
+				case 'get_cron':
+				header('Content-type: application/json');
+				echo json_encode(get_cron($_POST['user']));
+				break;
+				case 'server_start':
+				echo server_start($user['user']);
+				user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],time());
+				break;
+				case 'server_cmd':
+				server_cmd($user['user'], $_POST['cmd']);
+				break;
+				case 'server_stop':
+				server_stop($user['user']);
+				user_modify($user['user'],$user['pass'],$user['role'],$user['home'],$user['ram'],$user['port'],$user['jar'],$user['key'],'null');
+				break;
+				case 'server_kill':
+				server_kill($user['user']);
+				break;
+				case 'server_running':
+				echo json_encode(server_running($user['user']));
+				break;
+				case 'server_log':
 		/*if($files = glob($user['home'] . "screenlog.?*")) {
 			// Prefer GNU screen log
 			echo mclogparse2(file_backread($user['home']));
@@ -284,12 +281,12 @@ switch ($_POST['req']) {
 			echo mclogparse2(file_backread($user['home'] . '/server.log', 64));
 		} elseif(is_file($user['home'] . "/proxy.log.0")) {
                         // BungeeCord
-                        echo mclogparse2(file_backread($user['home'] . '/proxy.log.0', 64));
+			echo mclogparse2(file_backread($user['home'] . '/proxy.log.0', 64));
 		} else {
 			echo "No log file found.";
 		}
 		break;
-	case 'server_log_bytes':
+		case 'server_log_bytes':
 		header('Content-type: application/json');
 
 		// Find log file
@@ -298,7 +295,7 @@ switch ($_POST['req']) {
 		} elseif(is_file($user['home'] . '/server.log')) {
 			$file = $user['home'] . '/server.log';
 		} elseif(is_file($user['home'] . '/proxy.log.0')) {
-                        $file = $user['home'] . '/proxy.log.0';
+			$file = $user['home'] . '/proxy.log.0';
 		} else {
 			exit(json_encode(array('error' => 1, 'msg' => 'No log file found.')));
 		}
@@ -328,7 +325,7 @@ switch ($_POST['req']) {
 
 		echo json_encode($return);
 
-	case 'players':
+		case 'players':
 		require_once 'inc/MinecraftQuery.class.php';
 		$mq = new MinecraftQuery();
 		try {
@@ -345,10 +342,10 @@ switch ($_POST['req']) {
 
 		echo json_encode($data);
 		break;
-	case 'set_jar':
+		case 'set_jar':
 		$result = user_modify($user['user'], $user['pass'], $user['role'], $user['home'], $user['ram'], $user['port'], $_POST['jar'], $user['key']);
 		echo json_encode($result);
 		break;
-}
+	}
 
-?>
+	?>
