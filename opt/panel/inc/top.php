@@ -11,7 +11,7 @@
 	<li <?php echo basename($_SERVER["SCRIPT_NAME"]) == "dashboard.php" ? 'class="active"' : ""; ?>>
 		<a href="dashboard.php">Dashboard</a>
 	</li>
-	<li <?php echo basename($_SERVER["SCRIPT_NAME"]) == "files.php" ? 'class="active"' : ""; ?>>
+	<li <?php echo basename($_SERVER["SCRIPT_NAME"]) == "file-manager.php" ? 'class="active"' : ""; ?>>
 		<a href="files.php">File Manager</a>
 	</li>
 	<li <?php echo basename($_SERVER["SCRIPT_NAME"]) == "console.php" ? 'class="active"' : ""; ?>>
