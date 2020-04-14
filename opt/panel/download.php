@@ -10,4 +10,5 @@ if (empty($_SESSION['user']) || !$user = user_info($_SESSION['user'])) {
 
 // Force the file to download
 download($_GET['file'], $user['home'], $_GET['dl']);
+
 ?>

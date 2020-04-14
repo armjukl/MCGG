@@ -99,20 +99,20 @@ if (empty($_SESSION['user']) || !$user = user_info($_SESSION['user'])) {
 	</script>
 </head>
 <body>
-	<?php require 'inc/top.php'; ?>
-	<div class="tab-content">
-		<div class="tab-pane active">
-			<?php if (!empty($user['ram'])) { ?>
-				<pre id="log" class="well well-small"></pre>
-				<form id="frm-cmd">
-					<input type="text" id="cmd" name="cmd" maxlength="250" autofocus>
-				</form>
-				<?php
+<?php require 'inc/top.php'; ?>
+<div class="tab-content">
+	<div class="tab-pane active">
+		<?php if (!empty($user['ram'])) { ?>
+			<pre id="log" class="well well-small"></pre>
+			<form id="frm-cmd">
+				<input type="text" id="cmd" name="cmd" maxlength="250" autofocus>
+			</form>
+		<?php
 			} else {
 				echo '<p class="alert alert-info">Your account does not have a server.</p>';
 			}
-			?>
-		</div>
+		?>
 	</div>
+</div>
 </body>
 </html>
