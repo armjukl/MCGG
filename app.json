@@ -5,8 +5,8 @@
 		"games",
 		"minecraft"
 	],
-	"logo": "https://raw.githubusercontent.com/Milkenm/MCGG-VS/master/logo.png",
-	"repository": "https://github.com/Milkenm/MCGG-VS",
+	"logo": "https://raw.githubusercontent.com/Milkenm/MCGG/master/logo.png",
+	"repository": "https://github.com/Milkenm/MCGG",
 	"env": {
 		"DROPBOX_API_TOKEN": {
 			"description": "Your personal dropbox API token  (Goto https://www.dropbox.com/developers/apps Click on create app, Select Dropbox API, Select App folder, Name the app & create it, Click on the app, Goto Generated access token, Click on Generate and Copy the key.) ",
@@ -18,7 +18,7 @@
 			"url": "heroku/jvm"
 		},
 		{
-			"url": "https://github.com/Milkenm/MCGG-VS"
+			"url": "https://github.com/Milkenm/MCGG"
 		},
 		{
 			"url": "https://github.com/heroku/heroku-buildpack-php"
